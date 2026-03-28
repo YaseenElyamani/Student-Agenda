@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import type { Course } from "../types/Task";
 import styles from "./Sidebar.module.css";
 
@@ -18,8 +18,8 @@ interface SidebarProps {
 
 export default function Sidebar({ activeCourse, onSelectCourse }: SidebarProps) {
   const [courses, setCourses] = useState<Course[]>(defaultCourses);
+  const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleAddCourse = () => {
     const name = prompt("Enter course name (e.g. CS 401):");
@@ -35,50 +35,90 @@ export default function Sidebar({ activeCourse, onSelectCourse }: SidebarProps) 
   };
 
   return (
-    <div className={styles.sidebar}>
+    <div className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""}`}>
+      {/* Logo / Header */}
       <div className={styles.logo} onClick={() => navigate("/")}>
         <span className={styles.logoIcon}>✦</span>
-        <span className={styles.logoText}>StudHub</span>
-        <span className={styles.collapse}>‹</span>
+        {!collapsed && <span className={styles.logoText}>StudHub</span>}
+        <span
+          className={styles.collapseBtn}
+          onClick={(e) => { e.stopPropagation(); setCollapsed(!collapsed); }}
+        >
+          {collapsed ? "›" : "‹"}
+        </span>
       </div>
 
-      <div className={styles.section}>
-        <p className={styles.sectionLabel}>ACTIVE COURSES</p>
-        {courses.map((course) => (
-          <div
-            key={course.id}
-            className={`${styles.courseItem} ${activeCourse === course.id ? styles.active : ""}`}
-            onClick={() => {
-              onSelectCourse?.(course.id);
-              navigate("/dashboard");
-            }}
-          >
-            <span className={styles.dot} style={{ background: course.color }} />
-            {course.name}
+      {/* Active Courses — expanded */}
+      {!collapsed && (
+        <div className={styles.section}>
+          <p className={styles.sectionLabel}>ACTIVE COURSES</p>
+          {courses.map((course) => (
+            <div
+              key={course.id}
+              className={`${styles.courseItem} ${activeCourse === course.id ? styles.active : ""}`}
+              onClick={() => {
+                onSelectCourse?.(course.id);
+                navigate("/dashboard");
+              }}
+            >
+              <span className={styles.dot} style={{ background: course.color }} />
+              {course.name}
+            </div>
+          ))}
+          <button className={styles.addCourse} onClick={handleAddCourse}>
+            <span>+</span> Add Course
+          </button>
+        </div>
+      )}
+
+      {/* Active Courses — collapsed (just dots) */}
+      {collapsed && (
+        <div className={styles.collapsedCourses}>
+          {courses.map((course) => (
+            <div
+              key={course.id}
+              className={styles.collapsedDot}
+              title={course.name}
+              onClick={() => {
+                onSelectCourse?.(course.id);
+                navigate("/dashboard");
+              }}
+            >
+              <span className={styles.dot} style={{ background: course.color }} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Quick Access */}
+      {!collapsed && (
+        <div className={styles.section}>
+          <p className={styles.sectionLabel}>QUICK ACCESS</p>
+          <div className={styles.quickItem}>
+            <span>📅</span> Unified Calendar
           </div>
-        ))}
-        <button className={styles.addCourse} onClick={handleAddCourse}>
-          <span>+</span> Add Course
-        </button>
-      </div>
-
-      <div className={styles.section}>
-        <p className={styles.sectionLabel}>QUICK ACCESS</p>
-        <div className={styles.quickItem}>
-          <span>📅</span> Unified Calendar
+          <div className={styles.quickItem}>
+            <span>🗂</span> Resource Vault
+          </div>
         </div>
-        <div className={styles.quickItem}>
-          <span>🗂</span> Resource Vault
-        </div>
-      </div>
+      )}
 
+      {/* Footer */}
       <div className={styles.footer}>
-        <p className={styles.footerLabel}>Tasks Due</p>
-        <div className={styles.footerCount}>8</div>
-        <div className={styles.progressBar}>
-          <div className={styles.progressFill} style={{ width: "37.5%" }} />
-        </div>
-        <p className={styles.footerSub}>3 of 8 completed</p>
+        {!collapsed ? (
+          <>
+            <p className={styles.footerLabel}>Tasks Due</p>
+            <div className={styles.footerCount}>8</div>
+            <div className={styles.progressBar}>
+              <div className={styles.progressFill} style={{ width: "37.5%" }} />
+            </div>
+            <p className={styles.footerSub}>3 of 8 completed</p>
+          </>
+        ) : (
+          <div className={styles.progressBar}>
+            <div className={styles.progressFill} style={{ width: "37.5%" }} />
+          </div>
+        )}
       </div>
     </div>
   );
