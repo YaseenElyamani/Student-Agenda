@@ -4,13 +4,16 @@ import type { Task } from "../types/Task";
 export default function TaskCard({ task }: { task: Task }) {
   return (
     <div style={{
-      border: "1px solid #ccc",
-      padding: "10px",
-      marginTop: "10px",
-      borderRadius: "8px"
+      background: "#fff",
+      padding: "15px",
+      borderRadius: "10px",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
     }}>
-      <h3>{task.title}</h3>
-      <p>Due: {task.due_date}</p>
+      <h3 style={{ fontSize: "16px", marginBottom: "8px" }}>{task.title}</h3>
+      <p style={{ color: "#888", fontSize: "14px" }}>Due: {task.due_date}</p>
+      <p style={{ color: task.completed ? "green" : "red", fontSize: "14px" }}>
+        {task.completed ? "Completed" : "Pending"}
+      </p>
     </div>
   );
 }

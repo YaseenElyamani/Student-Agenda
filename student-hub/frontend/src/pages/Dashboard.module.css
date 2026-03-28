@@ -1,0 +1,80 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: #0d0f14;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.main {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.content {
+  padding: 36px 40px;
+  max-width: 1100px;
+}
+
+.heading {
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.subheading {
+  color: #4a4f62;
+  font-size: 14px;
+  margin: 0 0 28px;
+}
+
+.courseCard {
+  background: #15171f;
+  border: 1px solid #1e2028;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.courseHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #1e2028;
+}
+
+.courseInfo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.courseIcon {
+  font-size: 22px;
+  background: #1a1d27;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.courseName {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 3px;
+}
+
+.courseMeta {
+  color: #4a4f62;
+  font-size: 12px;
+  margin: 0;
+}
+
+.aiTag {
+  color: #34d399;
+  font-size: 12px;
+  font-weight: 500;
+}

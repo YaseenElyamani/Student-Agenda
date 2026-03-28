@@ -1,0 +1,77 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.th {
+  text-align: left;
+  color: #4a4f62;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-bottom: 1px solid #1e2028;
+  white-space: nowrap;
+}
+
+.row {
+  border-bottom: 1px solid #1a1d27;
+  transition: background 0.1s;
+}
+
+.row:hover {
+  background: #15171f;
+}
+
+.td {
+  padding: 14px 16px;
+  color: #d1d5db;
+  vertical-align: middle;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #3a3d4a;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, background 0.15s;
+  padding: 0;
+}
+
+.checkbox.checked {
+  background: #7c6fcd;
+  border-color: #7c6fcd;
+}
+
+.taskName {
+  font-weight: 500;
+  color: #e5e7eb;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+  color: #4a4f62;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+  border: 1px solid;
+}
+
+.dueDate {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.weight {
+  color: #e5e7eb;
+  font-weight: 600;
+}
