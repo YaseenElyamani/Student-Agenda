@@ -1,0 +1,9 @@
+[33m0c760f9[m[33m ([m[1;36mHEAD[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: pull origin main --rebase (start): checkout 0c760f93fd8ee30e51fb1bcb7c99a66192684849
+[33m43e6732[m[33m ([m[1;32mmain[m[33m)[m HEAD@{1}: commit: finished on most of the frontend, calendar complete etc.., now work on backend
+[33md65757a[m HEAD@{2}: pull origin main: Fast-forward
+[33m55ccfe5[m HEAD@{3}: commit: new changes
+[33m8b1344d[m HEAD@{4}: pull origin main: Fast-forward
+[33m535a035[m HEAD@{5}: commit: frontend done
+[33m6f01b64[m HEAD@{6}: commit: following the figma design
+[33mf0c9145[m HEAD@{7}: commit: first push
+[33m8976c56[m HEAD@{8}: clone: from https://github.com/YaseenElyamani/Student-Agenda.git
