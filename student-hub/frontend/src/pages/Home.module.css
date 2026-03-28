@@ -97,3 +97,26 @@
 .browseBtn:hover {
   background: #7c6fcd;
 }
+
+.dragOver {
+  border-color: #7c6fcd;
+  background: #1a1730;
+}
+
+.error {
+  color: #f87171;
+  font-size: 13px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.spinner {
+  display: inline-block;
+  font-size: 32px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

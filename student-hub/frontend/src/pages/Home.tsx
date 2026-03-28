@@ -1,9 +1,74 @@
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import styles from "./Home.module.css";
+import type { Task } from "../types/Task";
 
-export default function Home() {
+interface HomeProps {
+  onTasksLoaded: (tasks: Task[]) => void;
+}
+
+export default function Home({ onTasksLoaded }: HomeProps) {
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+
+  const handleFile = async (file: File) => {
+    if (!file || file.type !== "application/pdf") {
+      setError("Please upload a PDF file.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("http://localhost:5001/parse-syllabus", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Something went wrong.");
+        setLoading(false);
+        return;
+      }
+
+      const tasks: Task[] = (data.tasks || []).map((t: Partial<Task>, i: number) => ({
+        id: i + 1,
+        title: t.title ?? "Untitled",
+        type: (t.type as Task["type"]) ?? "Assignment",
+        due_date: t.due_date ?? "TBD",
+        weight: t.weight ?? "N/A",
+        completed: false,
+      }));
+
+      onTasksLoaded(tasks);
+      navigate("/dashboard");
+    } catch {
+      setError("Could not connect to backend. Make sure Flask is running on port 5001.");
+      setLoading(false);
+    }
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFile(file);
+  };
 
   return (
     <div className={styles.layout}>
@@ -14,16 +79,42 @@ export default function Home() {
           <h1 className={styles.heading}>Welcome to StudHub</h1>
           <p className={styles.subheading}>Upload a syllabus and let AI do the heavy lifting</p>
 
-          <div className={styles.uploadZone} onClick={() => navigate("/dashboard")}>
+          <div
+            className={`${styles.uploadZone} ${dragOver ? styles.dragOver : ""}`}
+            onClick={() => !loading && fileInputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={handleDrop}
+          >
             <div className={styles.uploadIcon}>
-              <span>✨</span>
+              {loading ? <span className={styles.spinner}>⟳</span> : <span>✨</span>}
             </div>
-            <h2 className={styles.uploadTitle}>Drop Winter 2026 Syllabus (PDF)</h2>
-            <p className={styles.uploadSub}>AI will automatically extract assignments, exams, and deadlines</p>
-            <button className={styles.browseBtn}>
-              <span>⬆</span> Browse Files
-            </button>
+
+            {loading ? (
+              <>
+                <h2 className={styles.uploadTitle}>Analyzing your syllabus...</h2>
+                <p className={styles.uploadSub}>AI is extracting assignments, exams, and deadlines</p>
+              </>
+            ) : (
+              <>
+                <h2 className={styles.uploadTitle}>Drop Winter 2026 Syllabus (PDF)</h2>
+                <p className={styles.uploadSub}>AI will automatically extract assignments, exams, and deadlines</p>
+                <button className={styles.browseBtn} onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}>
+                  <span>⬆</span> Browse Files
+                </button>
+              </>
+            )}
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/pdf"
+              style={{ display: "none" }}
+              onChange={handleFileInput}
+            />
           </div>
+
+          {error && <p className={styles.error}>{error}</p>}
         </div>
       </main>
     </div>
