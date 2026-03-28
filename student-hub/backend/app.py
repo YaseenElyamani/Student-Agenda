@@ -96,10 +96,10 @@ def parse_syllabus():
             full_text += page.get_text()
         doc.close()
 
-        context_text = full_text if len(full_text) < 10000 else full_text[-10000:]
+        context_text = full_text[:12000]
 
         chat_completion = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.3-70b-versatile",
             messages=[
                 {
                     "role": "system",
@@ -112,20 +112,24 @@ def parse_syllabus():
                 {
                     "role": "user",
                     "content": f"""
-                    Extract all assignments, exams, and quizzes from this syllabus text.
-                    Return ONLY a JSON object with this exact structure:
+                    Extract all graded items from this syllabus. Look for assignments, quizzes, exams, labs, and midterms.
+                    Check the weekly schedule table for due dates. Check the grading/evaluation section for weights.
+                    Return ONLY a JSON object with this exact structure, no explanation:
                     {{
-                      "course_code": "e.g. CP264",
-                      "course_name": "e.g. Data Structures",
+                      "course_code": "e.g. CP363",
+                      "course_name": "e.g. Database I",
                       "tasks": [
                         {{
-                          "title": "Assignment 1",
+                          "title": "Assignment 1: Simple Queries",
                           "type": "Assignment",
-                          "due_date": "YYYY-MM-DD",
+                          "due_date": "2026-01-31",
                           "weight": "10%"
                         }}
                       ]
                     }}
+                    Valid types are: Assignment, Quiz, Exam, Lab, Midterm.
+                    If a weight applies to a category (e.g. Assignments 50%), divide it evenly across all items in that category.
+                    If no specific due date exists, use TBD.
                     Syllabus Content:
                     {context_text}
                     """
@@ -135,6 +139,7 @@ def parse_syllabus():
         )
 
         raw_output = chat_completion.choices[0].message.content.strip()
+        print("Groq response:", raw_output)
         extracted_data = json.loads(raw_output)
 
         course = Course(

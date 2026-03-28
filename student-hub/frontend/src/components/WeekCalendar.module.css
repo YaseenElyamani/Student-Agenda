@@ -10,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .title {
@@ -29,8 +29,89 @@
 .range {
   color: #4a4f62;
   font-size: 13px;
+  min-width: 120px;
+  text-align: center;
 }
 
+.navBtn {
+  background: #1a1d27;
+  border: 1px solid #2a2d3a;
+  color: #9ca3af;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  padding: 0;
+}
+
+.navBtn:hover {
+  border-color: #7c6fcd;
+  color: #fff;
+}
+
+.todayBtn {
+  background: transparent;
+  border: 1px solid #2a2d3a;
+  color: #7c6fcd;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.todayBtn:hover {
+  border-color: #7c6fcd;
+  background: #1e1a3a;
+}
+
+.expandBtn {
+  background: #1e2038;
+  color: #7c6fcd;
+  border: 1px solid #7c6fcd;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.expandBtn:hover {
+  background: #2a2050;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legendDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.legendLabel {
+  color: #4a4f62;
+  font-size: 11px;
+}
+
+/* Week grid */
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -45,6 +126,11 @@
   border-radius: 10px;
   padding: 12px 8px;
   gap: 6px;
+  border: 1px solid transparent;
+}
+
+.today {
+  border-color: #7c6fcd;
 }
 
 .dayLabel {
@@ -69,4 +155,73 @@
   border-radius: 99px;
   border: 1px solid;
   margin-top: 4px;
+  white-space: nowrap;
+}
+
+/* Semester view */
+.semesterGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+.monthBlock {
+  background: #1a1d27;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.monthLabel {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.monthGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  text-align: center;
+}
+
+.weekdayLabel {
+  color: #4a4f62;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 0;
+}
+
+.calCell {
+  font-size: 11px;
+  color: #9ca3af;
+  padding: 4px 2px;
+  border-radius: 4px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.todayCell {
+  background: #1e1a3a;
+  color: #7c6fcd;
+  font-weight: 700;
+}
+
+.dueCell {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.dueDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  margin-top: 1px;
+}
+
+.noTasks {
+  color: #4a4f62;
+  font-size: 13px;
 }

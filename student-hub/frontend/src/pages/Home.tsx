@@ -5,10 +5,10 @@ import styles from "./Home.module.css";
 import type { Task } from "../types/Task";
 
 interface HomeProps {
-  onTasksLoaded: (tasks: Task[]) => void;
+  onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
 }
 
-export default function Home({ onTasksLoaded }: HomeProps) {
+export default function Home({ onCourseLoaded }: HomeProps) {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,6 @@ export default function Home({ onTasksLoaded }: HomeProps) {
       setError("Please upload a PDF file.");
       return;
     }
-
     setLoading(true);
     setError(null);
 
@@ -32,7 +31,6 @@ export default function Home({ onTasksLoaded }: HomeProps) {
         method: "POST",
         body: formData,
       });
-
       const data = await res.json();
 
       if (!res.ok) {
@@ -50,7 +48,11 @@ export default function Home({ onTasksLoaded }: HomeProps) {
         completed: false,
       }));
 
-      onTasksLoaded(tasks);
+      onCourseLoaded(
+        data.course?.code || "UNKNOWN",
+        data.course?.name || "Unknown Course",
+        tasks
+      );
       navigate("/dashboard");
     } catch {
       setError("Could not connect to backend. Make sure Flask is running on port 5001.");
@@ -72,7 +74,7 @@ export default function Home({ onTasksLoaded }: HomeProps) {
 
   return (
     <div className={styles.layout}>
-      <Sidebar />
+      <Sidebar courses={[]} activeCourseId={null} onSelectCourse={() => {}} onAddCourse={() => fileInputRef.current?.click()} />
 
       <main className={styles.main}>
         <div className={styles.content}>
@@ -97,7 +99,7 @@ export default function Home({ onTasksLoaded }: HomeProps) {
               </>
             ) : (
               <>
-                <h2 className={styles.uploadTitle}>Drop Winter 2026 Syllabus (PDF)</h2>
+                <h2 className={styles.uploadTitle}>Drop your Syllabus (PDF)</h2>
                 <p className={styles.uploadSub}>AI will automatically extract assignments, exams, and deadlines</p>
                 <button className={styles.browseBtn} onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}>
                   <span>⬆</span> Browse Files
