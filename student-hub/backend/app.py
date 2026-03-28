@@ -1,7 +1,9 @@
+import os
+import re
+import json
+import fitz  # pymupdf
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import fitz  # pymupdf
-import os
 from groq import Groq
 from dotenv import load_dotenv
 
@@ -14,7 +16,7 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 @app.route("/")
 def home():
-    return {"message": "Flask is working"}
+    return {"status": "online", "message": "Syllabus Parser API is running"}
 
 @app.route("/parse-syllabus", methods=["POST"])
 def parse_syllabus():
@@ -26,53 +28,61 @@ def parse_syllabus():
     if file.filename == "":
         return jsonify({"error": "No file selected"}), 400
 
-    # Extract text from PDF
-    pdf_bytes = file.read()
-    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-    text = ""
-    for page in doc:
-        text += page.get_text()
+    try:
+        pdf_bytes = file.read()
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+        full_text = ""
+        for page in doc:
+            full_text += page.get_text()
+        
+        doc.close()
+        context_text = full_text if len(full_text) < 10000 else full_text[-10000:]
 
-    # Send to Groq AI
-    response = client.chat.completions.create(
-        model="llama3-8b-8192",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a helpful assistant that extracts assignments, exams, and due dates from university syllabi. Always respond with valid JSON only, no extra text."
-            },
-            {
-                "role": "user",
-                "content": f"""Extract all assignments, exams, quizzes, and due dates from this syllabus. 
-                Return ONLY a JSON array like this:
-                [
-                  {{
-                    "title": "Assignment 1",
-                    "type": "Assignment",
-                    "due_date": "2024-02-15",
-                    "weight": "10%"
-                  }}
-                ]
-                
-                Syllabus text:
-                {text[:4000]}"""
-            }
-        ]
-    )
+        # 4. Request Structured JSON from Groq (Llama 3)
+        chat_completion = client.chat.completions.create(
+            model="llama3-8b-8192",
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a precise academic data extractor. "
+                        "Extract course information and graded items into valid JSON. "
+                        "If a year is missing, assume 2026."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": f"""
+                    Extract all assignments, exams, and quizzes from this syllabus text.
+                    
+                    Return ONLY a JSON object with this exact structure:
+                    {{
+                      "course_code": "e.g. CP264",
+                      "tasks": [
+                        {{
+                          "title": "Assignment 1",
+                          "type": "Assignment", 
+                          "due_date": "YYYY-MM-DD",
+                          "weight": "10%"
+                        }}
+                      ]
+                    }}
 
-    raw = response.choices[0].message.content.strip()
+                    Syllabus Content:
+                    {context_text}
+                    """
+                }
+            ],
+            response_format={"type": "json_object"}
+        )
+        raw_output = chat_completion.choices[0].message.content.strip()
+        extracted_data = json.loads(raw_output)
 
-    # Clean up response
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-    raw = raw.strip()
+        return jsonify(extracted_data)
 
-    import json
-    tasks = json.loads(raw)
-
-    return jsonify({"tasks": tasks})
+    except Exception as e:
+        print(f"Error processing syllabus: {str(e)}")
+        return jsonify({"error": "Internal server error during parsing"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
