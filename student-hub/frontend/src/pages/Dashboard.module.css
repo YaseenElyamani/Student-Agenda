@@ -88,3 +88,154 @@
   padding: 32px 24px;
   text-align: center;
 }
+
+.upcomingTime {
+  color: #7c6fcd;
+  font-weight: 600;
+}
+
+.upcomingCard {
+  background: #15171f;
+  border: 1px solid #1e2028;
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.upcomingHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.upcomingCount {
+  color: #4a4f62;
+  font-size: 12px;
+  background: #1a1d27;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+.upcomingList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.upcomingItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #1a1d27;
+}
+
+.upcomingItem:last-child {
+  border-bottom: none;
+}
+
+.upcomingBar {
+  width: 3px;
+  height: 36px;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+
+.upcomingInfo {
+  flex: 1;
+}
+
+.upcomingName {
+  color: #e5e7eb;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 3px;
+}
+
+.upcomingMeta {
+  color: #4a4f62;
+  font-size: 12px;
+  margin: 0;
+}
+
+.upcomingTime {
+  color: #7c6fcd;
+  font-weight: 600;
+}
+
+.daysLeft {
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 55px;
+  text-align: right;
+}
+
+.typeTag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  border: 1px solid #2a2d3a;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.filterBtn:hover {
+  border-color: #7c6fcd;
+  color: #fff;
+}
+
+.filterActive {
+  background: #7c6fcd;
+  border-color: #7c6fcd;
+  color: #fff;
+}
+
+.filterDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.showAllBtn {
+  background: transparent;
+  border: 1px solid #2a2d3a;
+  color: #7c6fcd;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.showAllBtn:hover {
+  border-color: #7c6fcd;
+  background: #1e1a3a;
+}

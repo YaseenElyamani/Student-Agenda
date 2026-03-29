@@ -13,14 +13,22 @@ export interface CourseInfo {
   tasks: Task[];
 }
 
-const COURSE_COLORS = ["#7c6fcd", "#a78bfa", "#f472b6", "#34d399", "#f59e0b"];
+const COURSE_COLORS = [
+  "#7c6fcd",
+  "#f472b6",
+  "#34d399",
+  "#f59e0b",
+  "#60a5fa",
+  "#fb7185",
+  "#a3e635",
+  "#e879f9",
+];
 
 function App() {
   const [courses, setCourses] = useState<CourseInfo[]>([]);
-  const [activeCourseId, setActiveCourseId] = useState<number | null>(null);
+  const [activeCourseId, setActiveCourseId] = useState<number | "all">("all");
   const [loading, setLoading] = useState(true);
 
-  // ── Load saved courses from backend on startup ──
   useEffect(() => {
     fetch("http://localhost:5001/courses/full")
       .then(res => res.json())
@@ -33,9 +41,6 @@ function App() {
           tasks: c.tasks,
         }));
         setCourses(restored);
-        if (restored.length > 0) {
-          setActiveCourseId(restored[0].id);
-        }
       })
       .catch(err => console.error("Failed to load courses:", err))
       .finally(() => setLoading(false));
@@ -43,15 +48,34 @@ function App() {
 
   const handleCourseLoaded = (code: string, name: string, tasks: Task[]) => {
     setCourses(prev => {
-      const colorIndex = prev.length % COURSE_COLORS.length;
-      // Generate a new ID based on the current number of courses
-      const id = prev.length + 1;
-      const color = COURSE_COLORS[colorIndex];
-      return [...prev, { id, code, name, color, tasks }];
+      if (prev.some(c => c.code === code)) return prev;
+      const color = COURSE_COLORS[prev.length % COURSE_COLORS.length];
+      const id = tasks[0]?.course_id ?? prev.length + 1;
+      const newCourse = { id, code, name, color, tasks };
+      setActiveCourseId(id);
+      return [...prev, newCourse];
     });
   };
 
-  const activeCourse = courses.find(c => c.id === activeCourseId) ?? courses[0] ?? null;
+  const handleRemoveCourse = (id: number) => {
+    fetch(`http://localhost:5001/courses/${id}`, { method: "DELETE" })
+      .then(() => {
+        setCourses(prev => {
+          const updated = prev.filter(c => c.id !== id);
+          if (activeCourseId === id) setActiveCourseId("all");
+          return updated;
+        });
+      })
+      .catch(err => console.error("Failed to delete course:", err));
+  };
+
+  const handleSelectCourse = (id: number | "all") => {
+    setActiveCourseId(id);
+  };
+
+  const activeCourse = activeCourseId === "all"
+    ? null
+    : courses.find(c => c.id === activeCourseId) ?? null;
 
   if (loading) {
     return (
@@ -75,23 +99,33 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home onCourseLoaded={handleCourseLoaded} />} />
+        <Route path="/" element={
+          <Home
+            courses={courses}
+            activeCourseId={activeCourseId}
+            onSelectCourse={handleSelectCourse}
+            onCourseLoaded={handleCourseLoaded}
+            onRemoveCourse={handleRemoveCourse}
+          />
+        } />
         <Route path="/dashboard" element={
           <Dashboard
             courses={courses}
             activeCourse={activeCourse}
             activeCourseId={activeCourseId}
-            onSelectCourse={setActiveCourseId}
+            onSelectCourse={handleSelectCourse}
             onCourseLoaded={handleCourseLoaded}
+            onRemoveCourse={handleRemoveCourse}
           />
         } />
         <Route path="/calendar" element={
           <Calendar
             courses={courses}
-            activeCourseId={activeCourseId}
-            onSelectCourse={setActiveCourseId}
+            activeCourseId={activeCourseId === "all" ? null : activeCourseId}
+            onSelectCourse={(id) => handleSelectCourse(id)}
             onAddCourse={() => {}}
             onCourseLoaded={handleCourseLoaded}
+            onRemoveCourse={handleRemoveCourse}
           />
         } />
       </Routes>

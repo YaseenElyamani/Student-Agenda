@@ -3,12 +3,17 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import styles from "./Home.module.css";
 import type { Task } from "../types/Task";
+import type { CourseInfo } from "../App";
 
 interface HomeProps {
+  courses: CourseInfo[];
+  activeCourseId: number | null;
+  onSelectCourse: (id: number) => void;
   onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
+  onRemoveCourse: (id: number) => void;
 }
 
-export default function Home({ onCourseLoaded }: HomeProps) {
+export default function Home({ courses, activeCourseId, onSelectCourse, onCourseLoaded, onRemoveCourse }: HomeProps) {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -39,7 +44,6 @@ export default function Home({ onCourseLoaded }: HomeProps) {
         return;
       }
 
-      // Use real task data directly from backend (includes id, course_id, due_time)
       const tasks: Task[] = (data.tasks || []).map((t: Task) => ({
         id: t.id,
         course_id: t.course_id,
@@ -79,10 +83,11 @@ export default function Home({ onCourseLoaded }: HomeProps) {
   return (
     <div className={styles.layout}>
       <Sidebar
-        courses={[]}
-        activeCourseId={null}
-        onSelectCourse={() => {}}
+        courses={courses}
+        activeCourseId={activeCourseId}
+        onSelectCourse={onSelectCourse}
         onAddCourse={() => fileInputRef.current?.click()}
+        onRemoveCourse={onRemoveCourse}
       />
 
       <main className={styles.main}>

@@ -6,17 +6,45 @@ import { useState } from "react";
 interface SidebarProps {
   courses: CourseInfo[];
   activeCourseId: number | null;
-  onSelectCourse: (id: number) => void;
+  onSelectCourse: (id: number | "all") => void;
   onAddCourse: () => void;
+  onRemoveCourse: (id: number) => void;
 }
 
-export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAddCourse }: SidebarProps) {
+export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAddCourse, onRemoveCourse }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const [hoveredCourseId, setHoveredCourseId] = useState<number | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
+  const courseToDelete = courses.find(c => c.id === confirmDeleteId);
+
   return (
     <div className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""}`}>
+
+      {confirmDeleteId !== null && (
+        <div className={styles.confirmOverlay}>
+          <div className={styles.confirmModal}>
+            <p className={styles.confirmText}>
+              Remove <strong>{courseToDelete?.code}</strong>?
+            </p>
+            <p className={styles.confirmSub}>This will delete all tasks for this course.</p>
+            <div className={styles.confirmBtns}>
+              <button className={styles.cancelBtn} onClick={() => setConfirmDeleteId(null)}>
+                Cancel
+              </button>
+              <button
+                className={styles.removeBtn}
+                onClick={() => { onRemoveCourse(confirmDeleteId); setConfirmDeleteId(null); }}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={styles.logo} onClick={() => navigate("/")}>
         <span className={styles.logoIcon}>✦</span>
         {!collapsed && <span className={styles.logoText}>StudHub</span>}
@@ -32,8 +60,8 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
         <div className={styles.section}>
           <p className={styles.sectionLabel}>NAVIGATION</p>
           <div
-            className={`${styles.quickItem} ${location.pathname === "/dashboard" ? styles.active : ""}`}
-            onClick={() => navigate("/dashboard")}
+            className={`${styles.quickItem} ${location.pathname === "/dashboard" && activeCourseId === null ? styles.active : ""}`}
+            onClick={() => { onSelectCourse("all"); navigate("/dashboard"); }}
           >
             <span>🏠</span> Dashboard
           </div>
@@ -56,10 +84,21 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
             <div
               key={course.id}
               className={`${styles.courseItem} ${activeCourseId === course.id ? styles.active : ""}`}
+              onMouseEnter={() => setHoveredCourseId(course.id)}
+              onMouseLeave={() => setHoveredCourseId(null)}
               onClick={() => { onSelectCourse(course.id); navigate("/dashboard"); }}
             >
               <span className={styles.dot} style={{ background: course.color }} />
-              {course.code}
+              <span className={styles.courseCode}>{course.code}</span>
+              {hoveredCourseId === course.id && (
+                <button
+                  className={styles.deleteBtn}
+                  onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(course.id); }}
+                  title="Remove course"
+                >
+                  ✕
+                </button>
+              )}
             </div>
           ))}
           <button className={styles.addCourse} onClick={onAddCourse}>

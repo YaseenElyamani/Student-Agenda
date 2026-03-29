@@ -7,20 +7,21 @@ const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
   Assignment: { bg: "#2a1a00", color: "#f59e0b" },
   Exam:       { bg: "#2a1a1a", color: "#f472b6" },
   Midterm:    { bg: "#2a1a1a", color: "#f472b6" },
+  "Final Exam": { bg: "#2a1a1a", color: "#f472b6" },
 };
 
 function formatDueDate(due_date: string, due_time?: string | null): string {
   if (!due_date || due_date === "TBD") return "TBD";
-  // Convert YYYY-MM-DD to readable format
   const [year, month, day] = due_date.split("-").map(Number);
   const date = new Date(year, month - 1, day);
   const dateStr = date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  if (due_time) {
-    // Convert 24hr to 12hr
+  if (due_time && due_time !== "null" && due_time.includes(":")) {
     const [h, m] = due_time.split(":").map(Number);
-    const ampm = h >= 12 ? "PM" : "AM";
-    const hour = h % 12 || 12;
-    return `${dateStr} at ${hour}:${String(m).padStart(2, "0")} ${ampm}`;
+    if (!isNaN(h) && !isNaN(m)) {
+      const ampm = h >= 12 ? "PM" : "AM";
+      const hour = h % 12 || 12;
+      return `${dateStr} at ${hour}:${String(m).padStart(2, "0")} ${ampm}`;
+    }
   }
   return dateStr;
 }
@@ -29,9 +30,13 @@ function isOverdue(due_date: string, due_time?: string | null): boolean {
   if (!due_date || due_date === "TBD") return false;
   const [year, month, day] = due_date.split("-").map(Number);
   const due = new Date(year, month - 1, day);
-  if (due_time) {
+  if (due_time && due_time !== "null" && due_time.includes(":")) {
     const [h, m] = due_time.split(":").map(Number);
-    due.setHours(h, m, 0, 0);
+    if (!isNaN(h) && !isNaN(m)) {
+      due.setHours(h, m, 0, 0);
+    } else {
+      due.setHours(23, 59, 59, 999);
+    }
   } else {
     due.setHours(23, 59, 59, 999);
   }

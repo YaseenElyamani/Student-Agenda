@@ -12,6 +12,7 @@ interface CalendarProps {
   onSelectCourse: (id: number) => void;
   onAddCourse: () => void;
   onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
+  onRemoveCourse: (id: number) => void;
 }
 
 function parseLocalDate(dateStr: string): Date {
@@ -24,7 +25,7 @@ const MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
 const SHORT_MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-export default function Calendar({ courses, activeCourseId, onSelectCourse, onCourseLoaded }: CalendarProps) {
+export default function Calendar({ courses, activeCourseId, onSelectCourse, onCourseLoaded, onRemoveCourse }: CalendarProps) {
   const today = new Date();
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -48,9 +49,7 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
     });
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  // ── FIX: Sunday = 0, matches ["Sun","Mon",...] header order ──
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-
   const cells = Array(firstDayOfMonth).fill(null).concat(
     Array.from({ length: daysInMonth }, (_, i) => i + 1)
   );
@@ -85,6 +84,7 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
         activeCourseId={activeCourseId}
         onSelectCourse={(id) => { onSelectCourse(id); navigate("/dashboard"); }}
         onAddCourse={() => setShowModal(true)}
+        onRemoveCourse={onRemoveCourse}
       />
 
       {showModal && (
@@ -96,7 +96,6 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
           <h1 className={styles.heading}>Unified Calendar</h1>
           <p className={styles.subheading}>View all your assignments and deadlines</p>
 
-          {/* Course Filter */}
           <div className={styles.filterRow}>
             <span className={styles.filterLabel}>⚙ Filter by course:</span>
             <button
@@ -118,7 +117,6 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
             ))}
           </div>
 
-          {/* Calendar */}
           <div className={styles.calendarCard}>
             <div className={styles.calendarHeader}>
               <h2 className={styles.monthTitle}>{MONTH_NAMES[currentMonth]} {currentYear}</h2>
@@ -155,7 +153,6 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
             </div>
           </div>
 
-          {/* Upcoming Assignments */}
           <div className={styles.upcomingCard}>
             <h2 className={styles.upcomingTitle}>Upcoming Assignments</h2>
             {upcomingTasks.length === 0 ? (
@@ -168,13 +165,26 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
                   <div key={i} className={styles.upcomingItem}>
                     <div className={styles.upcomingBar} style={{ background: t.courseColor }} />
                     <div className={styles.upcomingInfo}>
-                      <p className={styles.upcomingName}>{t.title}</p>
-                      <p className={styles.upcomingMeta}>{t.courseCode} • {dateLabel}</p>
+                        <p className={styles.upcomingName}>{t.title}</p>
+                        <p className={styles.upcomingMeta}>
+                        {t.courseCode} • {dateLabel}
+                        {t.due_time && t.due_time !== "null" && t.due_time.includes(":") && (() => {
+                            const [h, m] = t.due_time!.split(":").map(Number);
+                            if (isNaN(h) || isNaN(m)) return null;
+                            const ampm = h >= 12 ? "PM" : "AM";
+                            const hour = h % 12 || 12;
+                            return (
+                            <span style={{ color: "#7c6fcd", fontWeight: 600 }}>
+                                {" "}• {hour}:{String(m).padStart(2, "0")} {ampm}
+                            </span>
+                            );
+                        })()}
+                        </p>
                     </div>
                     <div className={styles.upcomingRight}>
-                      <span className={styles.upcomingWeight}>{t.weight}</span>
+                        <span className={styles.upcomingWeight}>{t.weight}</span>
                     </div>
-                  </div>
+                    </div>
                 );
               })
             )}

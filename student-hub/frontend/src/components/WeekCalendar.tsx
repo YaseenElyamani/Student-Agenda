@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./WeekCalendar.module.css";
 import type { Task } from "../types/Task";
 
@@ -33,25 +34,12 @@ function getWeekDays(offsetWeeks: number) {
 const SHORT_MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// Now accounts for due_time when checking overdue
-function getUrgency(
-  year: number, month: number, date: number, due_time?: string | null
-): "overdue" | "today" | "soon" | "upcoming" {
-  const now = new Date();
+function getUrgency(year: number, month: number, date: number): "overdue" | "today" | "soon" | "upcoming" {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const due = new Date(year, month, date);
-
-  if (due_time) {
-    const [h, m] = due_time.split(":").map(Number);
-    due.setHours(h, m, 0, 0);
-  } else {
-    due.setHours(23, 59, 59, 999);
-  }
-
-  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const dueMidnight = new Date(year, month, date);
-  const diffDays = Math.ceil((dueMidnight.getTime() - todayMidnight.getTime()) / (1000 * 60 * 60 * 24));
-
-  if (due < now) return "overdue";
+  const diffDays = Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays < 0) return "overdue";
   if (diffDays === 0) return "today";
   if (diffDays <= 3) return "soon";
   return "upcoming";
@@ -66,7 +54,7 @@ const URGENCY_STYLES: Record<string, { bg: string; color: string; border: string
 
 export default function WeekCalendar({ tasks = [] }: WeekCalendarProps) {
   const [weekOffset, setWeekOffset] = useState(0);
-  const [expanded, setExpanded] = useState(false);
+  const navigate = useNavigate();
   const weekDays = getWeekDays(weekOffset);
   const today = new Date();
 
@@ -89,120 +77,56 @@ export default function WeekCalendar({ tasks = [] }: WeekCalendarProps) {
       <div className={styles.header}>
         <div className={styles.title}>
           <span className={styles.icon}>📅</span>
-          <span>{expanded ? "Semester Overview" : "This Week"}</span>
+          <span>This Week</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          {!expanded && (
-            <>
-              <button className={styles.navBtn} onClick={() => setWeekOffset(o => o - 1)}>‹</button>
-              <span className={styles.range}>{rangeLabel}</span>
-              <button className={styles.navBtn} onClick={() => setWeekOffset(o => o + 1)}>›</button>
-              {weekOffset !== 0 && (
-                <button className={styles.todayBtn} onClick={() => setWeekOffset(0)}>Today</button>
-              )}
-            </>
+          <button className={styles.navBtn} onClick={() => setWeekOffset(o => o - 1)}>‹</button>
+          <span className={styles.range}>{rangeLabel}</span>
+          <button className={styles.navBtn} onClick={() => setWeekOffset(o => o + 1)}>›</button>
+          {weekOffset !== 0 && (
+            <button className={styles.todayBtn} onClick={() => setWeekOffset(0)}>Today</button>
           )}
-          <button className={styles.expandBtn} onClick={() => setExpanded(!expanded)}>
-            {expanded ? "Week View" : "Semester View"}
+          <button className={styles.expandBtn} onClick={() => navigate("/calendar")}>
+            Semester View ↗
           </button>
         </div>
       </div>
 
-      {!expanded && (
-        <>
-          <div className={styles.legend}>
-            {Object.entries(URGENCY_STYLES).map(([key, val]) => (
-              <div key={key} className={styles.legendItem}>
-                <span className={styles.legendDot} style={{ background: val.color }} />
-                <span className={styles.legendLabel}>{key.charAt(0).toUpperCase() + key.slice(1)}</span>
-              </div>
-            ))}
+      <div className={styles.legend}>
+        {Object.entries(URGENCY_STYLES).map(([key, val]) => (
+          <div key={key} className={styles.legendItem}>
+            <span className={styles.legendDot} style={{ background: val.color }} />
+            <span className={styles.legendLabel}>{key.charAt(0).toUpperCase() + key.slice(1)}</span>
           </div>
+        ))}
+      </div>
 
-          <div className={styles.grid}>
-            {weekDays.map((d) => {
-              const dueTasks = getTasksForDay(d.year, d.month, d.date);
-              const todayDay = isToday(d.year, d.month, d.date);
-              return (
-                <div key={`${d.year}-${d.month}-${d.date}`} className={`${styles.dayCol} ${todayDay ? styles.today : ""}`}>
-                  <p className={styles.dayLabel}>{d.day}</p>
-                  <p className={styles.dateNum}>{d.date}</p>
-                  {dueTasks.map((t, i) => {
-                    const urgency = getUrgency(d.year, d.month, d.date, t.due_time);
-                    const s = URGENCY_STYLES[urgency];
-                    return (
-                      <div
-                        key={i}
-                        className={styles.timePill}
-                        style={{ background: s.bg, color: s.color, borderColor: s.border }}
-                        title={`${t.title}${t.due_time ? ` — due at ${t.due_time}` : ""}`}
-                      >
-                        {urgency === "overdue" ? "Overdue"
-                          : urgency === "today" ? `Due ${t.due_time ?? "Today"}`
-                          : urgency === "soon" ? "Due Soon"
-                          : t.due_time ?? "Due"}
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </div>
-        </>
-      )}
-
-      {expanded && (
-        <div className={styles.semesterGrid}>
-          {tasks.length === 0 ? (
-            <p className={styles.noTasks}>No tasks with due dates found.</p>
-          ) : (
-            (() => {
-              const dates = tasks.filter(t => t.due_date && t.due_date !== "TBD").map(t => parseLocalDate(t.due_date));
-              if (dates.length === 0) return <p className={styles.noTasks}>No tasks found.</p>;
-              const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
-              const maxDate = new Date(Math.max(...dates.map(d => d.getTime())));
-              const months = [];
-              const cursor = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
-              while (cursor <= maxDate) {
-                months.push({ year: cursor.getFullYear(), month: cursor.getMonth() });
-                cursor.setMonth(cursor.getMonth() + 1);
-              }
-              return months.map(({ year, month }) => {
-                const daysInMonth = new Date(year, month + 1, 0).getDate();
-                const firstDay = (new Date(year, month, 1).getDay() + 6) % 7;
-                const cells = Array(firstDay).fill(null).concat(Array.from({ length: daysInMonth }, (_, i) => i + 1));
+      <div className={styles.grid}>
+        {weekDays.map((d) => {
+          const dueTasks = getTasksForDay(d.year, d.month, d.date);
+          const todayDay = isToday(d.year, d.month, d.date);
+          return (
+            <div key={`${d.year}-${d.month}-${d.date}`} className={`${styles.dayCol} ${todayDay ? styles.today : ""}`}>
+              <p className={styles.dayLabel}>{d.day}</p>
+              <p className={styles.dateNum}>{d.date}</p>
+              {dueTasks.map((t, i) => {
+                const urgency = getUrgency(d.year, d.month, d.date);
+                const s = URGENCY_STYLES[urgency];
                 return (
-                  <div key={`${year}-${month}`} className={styles.monthBlock}>
-                    <p className={styles.monthLabel}>{SHORT_MONTH_NAMES[month]} {year}</p>
-                    <div className={styles.monthGrid}>
-                      {["M","T","W","T","F","S","S"].map((d, i) => (
-                        <div key={i} className={styles.weekdayLabel}>{d}</div>
-                      ))}
-                      {cells.map((day, i) => {
-                        if (!day) return <div key={`e-${i}`} />;
-                        const dueTasks = getTasksForDay(year, month, day);
-                        const urgency = dueTasks.length > 0
-                          ? getUrgency(year, month, day, dueTasks[0].due_time)
-                          : null;
-                        return (
-                          <div
-                            key={day}
-                            className={`${styles.calCell} ${isToday(year, month, day) ? styles.todayCell : ""} ${dueTasks.length > 0 ? styles.dueCell : ""}`}
-                            title={dueTasks.map(t => `${t.title}${t.due_time ? ` @ ${t.due_time}` : ""}`).join(", ")}
-                          >
-                            {day}
-                            {urgency && <span className={styles.dueDot} style={{ background: URGENCY_STYLES[urgency].color }} />}
-                          </div>
-                        );
-                      })}
-                    </div>
+                  <div
+                    key={i}
+                    className={styles.timePill}
+                    style={{ background: s.bg, color: s.color, borderColor: s.border }}
+                    title={t.title}
+                  >
+                    {urgency === "overdue" ? "Overdue" : urgency === "today" ? "Due Today" : urgency === "soon" ? "Due Soon" : "Due"}
                   </div>
                 );
-              });
-            })()
-          )}
-        </div>
-      )}
+              })}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -31,11 +31,17 @@ export default function UploadModal({ onClose, onCourseLoaded }: UploadModalProp
       });
       const data = await res.json();
 
+      if (res.status === 409) {
+        setError(data.error || "This course is already added.");
+        setLoading(false);
+        return;
+    }
+
       if (!res.ok) {
         setError(data.error || "Something went wrong.");
         setLoading(false);
         return;
-      }
+    }
 
       // Use real task data directly from backend (includes id, course_id, due_time)
       const tasks: Task[] = (data.tasks || []).map((t: Task) => ({

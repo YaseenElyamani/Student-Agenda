@@ -12,6 +12,7 @@
   font-family: 'Inter', sans-serif;
   transition: width 0.25s ease, min-width 0.25s ease;
   overflow: hidden;
+  z-index: 50;
 }
 
 .sidebar.collapsed {
@@ -201,4 +202,96 @@
   color: #4a4f62;
   font-size: 11px;
   margin: 0;
+}
+
+.courseCode {
+  flex: 1;
+}
+
+.deleteBtn {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.15s, background 0.15s;
+}
+
+.deleteBtn:hover {
+  color: #ef4444;
+  background: #2a1a1a;
+}
+
+/* Confirm modal */
+.confirmOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.confirmModal {
+  background: #15171f;
+  border: 1px solid #2a2d3a;
+  border-radius: 14px;
+  padding: 28px 32px;
+  width: 320px;
+  text-align: center;
+}
+
+.confirmText {
+  color: #ffffff;
+  font-size: 15px;
+  margin: 0 0 6px;
+}
+
+.confirmSub {
+  color: #4a4f62;
+  font-size: 13px;
+  margin: 0 0 20px;
+}
+
+.confirmBtns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.cancelBtn {
+  background: #1a1d27;
+  border: 1px solid #2a2d3a;
+  color: #9ca3af;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cancelBtn:hover {
+  border-color: #4a4f62;
+  color: #fff;
+}
+
+.removeBtn {
+  background: #ef4444;
+  border: none;
+  color: #ffffff;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.removeBtn:hover {
+  background: #dc2626;
 }
