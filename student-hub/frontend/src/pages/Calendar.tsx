@@ -48,10 +48,8 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
     });
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const firstDayOfMonth = (() => {
-    const day = new Date(currentYear, currentMonth, 1).getDay();
-    return (day + 6) % 7; // Monday = 0
-  })();
+  // ── FIX: Sunday = 0, matches ["Sun","Mon",...] header order ──
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
 
   const cells = Array(firstDayOfMonth).fill(null).concat(
     Array.from({ length: daysInMonth }, (_, i) => i + 1)
@@ -67,7 +65,6 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
     else setCurrentMonth(m => m + 1);
   };
 
-  // Upcoming tasks sorted by date
   const upcomingTasks = allTasks
     .filter(t => {
       if (!t.due_date || t.due_date === "TBD") return false;
