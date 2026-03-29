@@ -105,11 +105,16 @@ def parse_syllabus():
         doc = fitz.open(stream=pdf_bytes, filetype="pdf")
         full_text = "".join(page.get_text() for page in doc)
         doc.close()
+<<<<<<< HEAD
+=======
+
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
         context_text = full_text[:12000]
 
         chat_completion = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
+<<<<<<< HEAD
                 {"role": "system",
                  "content": ("You are a precise academic data extractor. "
                              "Extract course info and graded items into valid JSON. "
@@ -134,11 +139,47 @@ def parse_syllabus():
                  Syllabus Content:
                  {context_text}
                  """}
+=======
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a precise academic data extractor. "
+                        "Extract course information and graded items into valid JSON. "
+                        "If a year is missing, assume 2026."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": f"""
+                    Extract all graded items from this syllabus. Look for assignments, quizzes, exams, labs, and midterms.
+                    Check the weekly schedule table for due dates. Check the grading/evaluation section for weights.
+                    Return ONLY a JSON object with this exact structure, no explanation:
+                    {{
+                      "course_code": "e.g. CP363",
+                      "course_name": "e.g. Database I",
+                      "tasks": [
+                        {{
+                          "title": "Assignment 1: Simple Queries",
+                          "type": "Assignment",
+                          "due_date": "2026-01-31",
+                          "weight": "10%"
+                        }}
+                      ]
+                    }}
+                    Valid types are: Assignment, Quiz, Exam, Lab, Midterm.
+                    If a weight applies to a category (e.g. Assignments 50%), divide it evenly across all items in that category.
+                    If no specific due date exists, use TBD.
+                    Syllabus Content:
+                    {context_text}
+                    """
+                }
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
             ],
             response_format={"type": "json_object"}
         )
 
         raw_output = chat_completion.choices[0].message.content.strip()
+        print("Groq response:", raw_output)
         extracted_data = json.loads(raw_output)
 
         course_code = extracted_data.get("course_code", "UNKNOWN")

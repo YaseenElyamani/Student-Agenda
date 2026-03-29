@@ -31,16 +31,20 @@ export default function UploadModal({ onClose, onCourseLoaded }: UploadModalProp
       });
       const data = await res.json();
 
+<<<<<<< HEAD
       if (res.status === 409) {
         setError(data.error || "This course is already added.");
         setLoading(false);
         return;
     }
 
+=======
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
       if (!res.ok) {
         setError(data.error || "Something went wrong.");
         setLoading(false);
         return;
+<<<<<<< HEAD
     }
 
       // Use real task data directly from backend (includes id, course_id, due_time)
@@ -54,6 +58,17 @@ export default function UploadModal({ onClose, onCourseLoaded }: UploadModalProp
         due_time: t.due_time ?? null,
         weight: t.weight ?? "N/A",
         completed: t.completed ?? false,
+=======
+      }
+
+      const tasks: Task[] = (data.tasks || []).map((t: Partial<Task>, i: number) => ({
+        id: Date.now() + i,
+        title: t.title ?? "Untitled",
+        type: (t.type as Task["type"]) ?? "Assignment",
+        due_date: t.due_date ?? "TBD",
+        weight: t.weight ?? "N/A",
+        completed: false,
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
       }));
 
       onCourseLoaded(

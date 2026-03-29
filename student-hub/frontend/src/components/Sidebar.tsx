@@ -5,6 +5,7 @@ import { useState } from "react";
 
 interface SidebarProps {
   courses: CourseInfo[];
+<<<<<<< HEAD
   activeCourseId: number | "all" | null;
   onSelectCourse: (id: number | "all") => void;
   onAddCourse: () => void;
@@ -13,11 +14,20 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAddCourse, onRemoveCourse, completedIds }: SidebarProps) {
+=======
+  activeCourseId: number | null;
+  onSelectCourse: (id: number) => void;
+  onAddCourse: () => void;
+}
+
+export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAddCourse }: SidebarProps) {
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
   const [collapsed, setCollapsed] = useState(false);
   const [hoveredCourseId, setHoveredCourseId] = useState<number | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+<<<<<<< HEAD
 
   const courseToDelete = courses.find(c => c.id === confirmDeleteId);
 
@@ -52,6 +62,11 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
         </div>
       )}
 
+=======
+
+  return (
+    <div className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""}`}>
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
       <div className={styles.logo} onClick={() => navigate("/")}>
         <span className={styles.logoIcon}>✦</span>
         {!collapsed && <span className={styles.logoText}>StudHub</span>}
@@ -63,6 +78,7 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
         </span>
       </div>
 
+<<<<<<< HEAD
       {!collapsed && (
         <div className={styles.section}>
           <p className={styles.sectionLabel}>NAVIGATION</p>
@@ -88,11 +104,37 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
 
       {!collapsed && (
         <div className={styles.section}>
+=======
+      {!collapsed && (
+        <div className={styles.section}>
+          <p className={styles.sectionLabel}>NAVIGATION</p>
+          <div
+            className={`${styles.quickItem} ${location.pathname === "/dashboard" ? styles.active : ""}`}
+            onClick={() => navigate("/dashboard")}
+          >
+            <span>🏠</span> Dashboard
+          </div>
+          <div
+            className={`${styles.quickItem} ${location.pathname === "/calendar" ? styles.active : ""}`}
+            onClick={() => navigate("/calendar")}
+          >
+            <span>📅</span> Unified Calendar
+          </div>
+          <div className={styles.quickItem}>
+            <span>🗂</span> Resource Vault
+          </div>
+        </div>
+      )}
+
+      {!collapsed && (
+        <div className={styles.section}>
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
           <p className={styles.sectionLabel}>ACTIVE COURSES</p>
           {courses.map((course) => (
             <div
               key={course.id}
               className={`${styles.courseItem} ${activeCourseId === course.id ? styles.active : ""}`}
+<<<<<<< HEAD
               onMouseEnter={() => setHoveredCourseId(course.id)}
               onMouseLeave={() => setHoveredCourseId(null)}
               onClick={() => { onSelectCourse(course.id); navigate("/dashboard"); }}
@@ -108,6 +150,12 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
                   ✕
                 </button>
               )}
+=======
+              onClick={() => { onSelectCourse(course.id); navigate("/dashboard"); }}
+            >
+              <span className={styles.dot} style={{ background: course.color }} />
+              {course.code}
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
             </div>
           ))}
           <button className={styles.addCourse} onClick={onAddCourse}>
@@ -135,11 +183,21 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
         {!collapsed ? (
           <>
             <p className={styles.footerLabel}>Tasks Due</p>
+<<<<<<< HEAD
             <div className={styles.footerCount}>{totalTasks - completedCount}</div>
+=======
+            <div className={styles.footerCount}>
+              {courses.reduce((acc, c) => acc + c.tasks.length, 0)}
+            </div>
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
             <div className={styles.progressBar}>
               <div className={styles.progressFill} style={{ width: `${progressPct}%` }} />
             </div>
+<<<<<<< HEAD
             <p className={styles.footerSub}>{completedCount} of {totalTasks} completed</p>
+=======
+            <p className={styles.footerSub}>Upload a syllabus to begin</p>
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
           </>
         ) : (
           <div className={styles.progressBar}>

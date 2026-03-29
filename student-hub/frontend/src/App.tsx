@@ -13,6 +13,7 @@ export interface CourseInfo {
   tasks: Task[];
 }
 
+<<<<<<< HEAD
 const COURSE_COLORS = [
   "#7c6fcd",
   "#f472b6",
@@ -147,10 +148,28 @@ function App() {
       </div>
     );
   }
+=======
+const COURSE_COLORS = ["#7c6fcd", "#a78bfa", "#f472b6", "#34d399", "#f59e0b"];
+
+function App() {
+  const [courses, setCourses] = useState<CourseInfo[]>([]);
+  const [activeCourseId, setActiveCourseId] = useState<number | null>(null);
+
+  const handleCourseLoaded = (code: string, name: string, tasks: Task[]) => {
+    setCourses(prev => {
+      const id = prev.length + 1;
+      const color = COURSE_COLORS[prev.length % COURSE_COLORS.length];
+      return [...prev, { id, code, name, color, tasks }];
+    });
+  };
+
+  const activeCourse = courses.find(c => c.id === activeCourseId) ?? courses[0] ?? null;
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
 
   return (
     <BrowserRouter>
       <Routes>
+<<<<<<< HEAD
         <Route path="/" element={
           <Home
             courses={courses}
@@ -160,11 +179,15 @@ function App() {
             onRemoveCourse={handleRemoveCourse}
           />
         } />
+=======
+        <Route path="/" element={<Home onCourseLoaded={handleCourseLoaded} />} />
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
         <Route path="/dashboard" element={
           <Dashboard
             courses={courses}
             activeCourse={activeCourse}
             activeCourseId={activeCourseId}
+<<<<<<< HEAD
             onSelectCourse={handleSelectCourse}
             onCourseLoaded={handleCourseLoaded}
             onRemoveCourse={handleRemoveCourse}
@@ -173,16 +196,27 @@ function App() {
             onTaskUpdated={handleTaskUpdated}
             onTaskDeleted={handleTaskDeleted}
             onTaskAdded={handleTaskAdded}
+=======
+            onSelectCourse={setActiveCourseId}
+            onCourseLoaded={handleCourseLoaded}
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
           />
         } />
         <Route path="/calendar" element={
           <Calendar
             courses={courses}
+<<<<<<< HEAD
             activeCourseId={activeCourseId === "all" ? null : activeCourseId}
             onSelectCourse={(id) => handleSelectCourse(id)}
             onAddCourse={() => {}}
             onCourseLoaded={handleCourseLoaded}
             onRemoveCourse={handleRemoveCourse}
+=======
+            activeCourseId={activeCourseId}
+            onSelectCourse={setActiveCourseId}
+            onAddCourse={() => {}}
+            onCourseLoaded={handleCourseLoaded}
+>>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
           />
         } />
       </Routes>
