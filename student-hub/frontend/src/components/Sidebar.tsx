@@ -78,9 +78,11 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
           >
             <span>📅</span> Unified Calendar
           </div>
+          {/*}
           <div className={styles.quickItem}>
             <span>🗂</span> Resource Vault
           </div>
+          */}
         </div>
       )}
 

@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar";
 import WeekCalendar from "../components/WeekCalendar";
 import TaskTable from "../components/TaskTable";
 import UploadModal from "../components/UploadModal";
+import AddTaskModal from "../components/AddTaskModal";
 import type { Task } from "../types/Task";
 import type { CourseInfo } from "../App";
 import styles from "./Dashboard.module.css";
@@ -17,6 +18,8 @@ interface DashboardProps {
   completedIds: Set<number>;
   onToggleTask: (id: number) => void;
   onTaskUpdated: (updated: Task) => void;
+  onTaskDeleted: (id: number) => void;
+  onTaskAdded: (task: Task) => void;
 }
 
 function parseLocalDate(dateStr: string): Date {
@@ -33,6 +36,64 @@ function formatTime(due_time?: string | null): string {
   return `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
 }
 
+function exportToICS(courses: CourseInfo[]) {
+  const lines: string[] = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//StudHub//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+  ];
+
+  courses.forEach(course => {
+    course.tasks.forEach(task => {
+      if (!task.due_date || task.due_date === "TBD") return;
+
+      const [year, month, day] = task.due_date.split("-").map(Number);
+      let dtstart: string;
+      let dtend: string;
+
+      if (task.due_time && task.due_time !== "null" && task.due_time.includes(":")) {
+        const [h, m] = task.due_time.split(":").map(Number);
+        const pad = (n: number) => String(n).padStart(2, "0");
+        const dateStr = `${year}${pad(month)}${pad(day)}T${pad(h)}${pad(m)}00`;
+        dtstart = `DTSTART:${dateStr}`;
+        // end 1 hour later
+        const endH = h + 1 >= 24 ? 23 : h + 1;
+        dtend = `DTEND:${year}${pad(month)}${pad(day)}T${pad(endH)}${pad(m)}00`;
+      } else {
+        const pad = (n: number) => String(n).padStart(2, "0");
+        dtstart = `DTSTART;VALUE=DATE:${year}${pad(month)}${pad(day)}`;
+        dtend = `DTEND;VALUE=DATE:${year}${pad(month)}${pad(day)}`;
+      }
+
+      const uid = `task-${task.id}-${course.code}@studhub`;
+      const summary = `SUMMARY:${course.code}: ${task.title}`;
+      const description = `DESCRIPTION:Type: ${task.type} | Weight: ${task.weight}`;
+
+      lines.push(
+        "BEGIN:VEVENT",
+        uid,
+        dtstart,
+        dtend,
+        summary,
+        description,
+        "END:VEVENT"
+      );
+    });
+  });
+
+  lines.push("END:VCALENDAR");
+
+  const blob = new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "studhub-schedule.ics";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 const SHORT_MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -43,6 +104,7 @@ const TYPE_COLORS: Record<string, string> = {
   Exam: "#f472b6",
   Midterm: "#f472b6",
   "Final Exam": "#f472b6",
+  Discussion: "#22d3ee",
 };
 
 export default function Dashboard({
@@ -54,8 +116,11 @@ export default function Dashboard({
   completedIds,
   onToggleTask,
   onTaskUpdated,
+  onTaskDeleted,
+  onTaskAdded,
 }: DashboardProps) {
   const [showModal, setShowModal] = useState(false);
+  const [showAddTask, setShowAddTask] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
   const allTasks = courses.flatMap(c =>
@@ -105,6 +170,15 @@ export default function Dashboard({
         <UploadModal
           onClose={() => setShowModal(false)}
           onCourseLoaded={handleCourseLoaded}
+        />
+      )}
+
+      {showAddTask && (
+        <AddTaskModal
+          courses={courses}
+          defaultCourseId={activeCourseId === "all" ? null : activeCourseId}
+          onClose={() => setShowAddTask(false)}
+          onTaskAdded={onTaskAdded}
         />
       )}
 
@@ -176,6 +250,19 @@ export default function Dashboard({
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <button
+                  className={styles.exportBtn}
+                  onClick={() => exportToICS(courses)}
+                  title="Export to Google Calendar / Apple Calendar"
+                >
+                  📅 Export Calendar
+                </button>
+                <button
+                  className={styles.addTaskBtn}
+                  onClick={() => setShowAddTask(true)}
+                >
+                  + Add Task
+                </button>
+                <button
                   className={editMode ? styles.editModeActiveBtn : styles.editModeBtn}
                   onClick={() => setEditMode(e => !e)}
                 >
@@ -197,6 +284,7 @@ export default function Dashboard({
                   tasks={filteredTasks}
                   onToggle={onToggleTask}
                   onTaskUpdated={onTaskUpdated}
+                  onTaskDeleted={onTaskDeleted}
                   editMode={editMode}
                 />
               : <p className={styles.empty}>

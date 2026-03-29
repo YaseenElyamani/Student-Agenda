@@ -10,6 +10,7 @@ const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
   Exam:       { bg: "#2a1a1a", color: "#f472b6" },
   Midterm:    { bg: "#2a1a1a", color: "#f472b6" },
   "Final Exam": { bg: "#2a1a1a", color: "#f472b6" },
+  Discussion: { bg: "#0e2a2a", color: "#22d3ee" },
 };
 
 function formatDueDate(due_date: string, due_time?: string | null): string {
@@ -49,10 +50,11 @@ interface TaskTableProps {
   tasks: Task[];
   onToggle: (id: number) => void;
   onTaskUpdated: (updated: Task) => void;
+  onTaskDeleted: (id: number) => void;
   editMode?: boolean;
 }
 
-export default function TaskTable({ tasks, onToggle, onTaskUpdated, editMode }: TaskTableProps) {
+export default function TaskTable({ tasks, onToggle, onTaskUpdated, onTaskDeleted, editMode }: TaskTableProps) {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   return (
@@ -62,6 +64,7 @@ export default function TaskTable({ tasks, onToggle, onTaskUpdated, editMode }: 
           task={editingTask}
           onClose={() => setEditingTask(null)}
           onSave={(updated) => { onTaskUpdated(updated); setEditingTask(null); }}
+          onDelete={(id) => { onTaskDeleted(id); setEditingTask(null); }}
         />
       )}
       <table className={styles.table}>

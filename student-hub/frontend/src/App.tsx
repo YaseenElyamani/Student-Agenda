@@ -97,6 +97,30 @@ function App() {
     );
   };
 
+  const handleTaskDeleted = (id: number) => {
+    setCourses(prev =>
+      prev.map(c => ({
+        ...c,
+        tasks: c.tasks.filter(t => t.id !== id),
+      }))
+    );
+    setCompletedIds(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
+
+  const handleTaskAdded = (task: Task) => {
+    setCourses(prev =>
+      prev.map(c =>
+        c.id === task.course_id
+          ? { ...c, tasks: [...c.tasks, task] }
+          : c
+      )
+    );
+  };
+
   const handleSelectCourse = (id: number | "all") => {
     setActiveCourseId(id);
   };
@@ -147,6 +171,8 @@ function App() {
             completedIds={completedIds}
             onToggleTask={handleToggleTask}
             onTaskUpdated={handleTaskUpdated}
+            onTaskDeleted={handleTaskDeleted}
+            onTaskAdded={handleTaskAdded}
           />
         } />
         <Route path="/calendar" element={
