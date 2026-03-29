@@ -39,13 +39,17 @@ export default function Home({ onCourseLoaded }: HomeProps) {
         return;
       }
 
-      const tasks: Task[] = (data.tasks || []).map((t: Partial<Task>, i: number) => ({
-        id: i + 1,
+      // Use real task data directly from backend (includes id, course_id, due_time)
+      const tasks: Task[] = (data.tasks || []).map((t: Task) => ({
+        id: t.id,
+        course_id: t.course_id,
+        course_code: t.course_code,
         title: t.title ?? "Untitled",
-        type: (t.type as Task["type"]) ?? "Assignment",
+        type: t.type ?? "Assignment",
         due_date: t.due_date ?? "TBD",
+        due_time: t.due_time ?? null,
         weight: t.weight ?? "N/A",
-        completed: false,
+        completed: t.completed ?? false,
       }));
 
       onCourseLoaded(
@@ -74,7 +78,12 @@ export default function Home({ onCourseLoaded }: HomeProps) {
 
   return (
     <div className={styles.layout}>
-      <Sidebar courses={[]} activeCourseId={null} onSelectCourse={() => {}} onAddCourse={() => fileInputRef.current?.click()} />
+      <Sidebar
+        courses={[]}
+        activeCourseId={null}
+        onSelectCourse={() => {}}
+        onAddCourse={() => fileInputRef.current?.click()}
+      />
 
       <main className={styles.main}>
         <div className={styles.content}>
@@ -101,7 +110,10 @@ export default function Home({ onCourseLoaded }: HomeProps) {
               <>
                 <h2 className={styles.uploadTitle}>Drop your Syllabus (PDF)</h2>
                 <p className={styles.uploadSub}>AI will automatically extract assignments, exams, and deadlines</p>
-                <button className={styles.browseBtn} onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}>
+                <button
+                  className={styles.browseBtn}
+                  onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
+                >
                   <span>⬆</span> Browse Files
                 </button>
               </>

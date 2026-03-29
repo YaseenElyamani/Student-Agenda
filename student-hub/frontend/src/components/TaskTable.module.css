@@ -75,3 +75,23 @@
   color: #e5e7eb;
   font-weight: 600;
 }
+
+.overdueRow {
+  opacity: 0.75;
+}
+
+.overdueTag {
+  margin-left: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #ef4444;
+  background: #2a1a1a;
+  border: 1px solid #ef4444;
+  border-radius: 99px;
+  padding: 2px 7px;
+  vertical-align: middle;
+}
+
+.overdueDate {
+  color: #ef4444;
+}

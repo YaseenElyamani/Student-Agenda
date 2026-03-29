@@ -1,8 +1,11 @@
 export interface Task {
   id: number;
+  course_id?: number;
+  course_code?: string;
   title: string;
-  type: "Lab" | "Quiz" | "Assignment" | "Exam";
+  type: "Lab" | "Quiz" | "Assignment" | "Exam" | "Midterm";
   due_date: string;
+  due_time?: string | null;
   weight: string;
   completed: boolean;
 }
@@ -17,8 +20,9 @@ export interface Course {
 
 export interface NewTask {
   title: string;
-  type: "Lab" | "Quiz" | "Assignment" | "Exam";
+  type: "Lab" | "Quiz" | "Assignment" | "Exam" | "Midterm";
   due_date: string;
+  due_time?: string | null;
   weight: string;
   completed?: boolean;
 }

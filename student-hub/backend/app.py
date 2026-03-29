@@ -40,6 +40,7 @@ class Task(db.Model):
     title = db.Column(db.String(200), nullable=False)
     type = db.Column(db.String(50), default="Assignment")
     due_date = db.Column(db.String(20))
+    due_time = db.Column(db.String(10))   # ← NEW: e.g. "11:59" or null
     weight = db.Column(db.String(20))
     completed = db.Column(db.Boolean, default=False)
 
@@ -51,6 +52,7 @@ class Task(db.Model):
             "title": self.title,
             "type": self.type,
             "due_date": self.due_date,
+            "due_time": self.due_time,     # ← NEW
             "weight": self.weight,
             "completed": self.completed
         }
@@ -70,6 +72,20 @@ def home():
 def get_courses():
     courses = Course.query.all()
     return jsonify([c.to_dict() for c in courses])
+
+# ─── NEW: Returns all courses WITH their full task lists ──
+@app.route("/courses/full", methods=["GET"])
+def get_courses_full():
+    courses = Course.query.all()
+    return jsonify([
+        {
+            "id": c.id,
+            "code": c.code,
+            "name": c.name,
+            "tasks": [t.to_dict() for t in c.tasks]
+        }
+        for c in courses
+    ])
 
 @app.route("/courses/<int:course_id>", methods=["DELETE"])
 def delete_course(course_id):
@@ -113,7 +129,7 @@ def parse_syllabus():
                     "role": "user",
                     "content": f"""
                     Extract all graded items from this syllabus. Look for assignments, quizzes, exams, labs, and midterms.
-                    Check the weekly schedule table for due dates. Check the grading/evaluation section for weights.
+                    Check the weekly schedule table for due dates and times. Check the grading/evaluation section for weights.
                     Return ONLY a JSON object with this exact structure, no explanation:
                     {{
                       "course_code": "e.g. CP363",
@@ -123,11 +139,13 @@ def parse_syllabus():
                           "title": "Assignment 1: Simple Queries",
                           "type": "Assignment",
                           "due_date": "2026-01-31",
+                          "due_time": "11:59",
                           "weight": "10%"
                         }}
                       ]
                     }}
                     Valid types are: Assignment, Quiz, Exam, Lab, Midterm.
+                    For due_time: use 24-hour format (e.g. "23:59"). If no time is mentioned, use null.
                     If a weight applies to a category (e.g. Assignments 50%), divide it evenly across all items in that category.
                     If no specific due date exists, use TBD.
                     Syllabus Content:
@@ -155,6 +173,7 @@ def parse_syllabus():
                 title=t.get("title", "Untitled"),
                 type=t.get("type", "Assignment"),
                 due_date=t.get("due_date"),
+                due_time=t.get("due_time"),   # ← NEW
                 weight=t.get("weight")
             )
             db.session.add(task)
@@ -215,6 +234,7 @@ def add_task():
         title=data["title"].strip(),
         type=data.get("type", "Assignment"),
         due_date=data.get("due_date"),
+        due_time=data.get("due_time"),   # ← NEW
         weight=data.get("weight")
     )
     db.session.add(task)
@@ -236,6 +256,8 @@ def update_task(task_id):
         task.type = data["type"]
     if "due_date" in data:
         task.due_date = data["due_date"]
+    if "due_time" in data:       # ← NEW
+        task.due_time = data["due_time"]
     if "weight" in data:
         task.weight = data["weight"]
 

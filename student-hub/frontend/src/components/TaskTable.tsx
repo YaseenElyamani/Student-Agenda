@@ -2,11 +2,41 @@ import type { Task } from "../types/Task";
 import styles from "./TaskTable.module.css";
 
 const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
-  Lab: { bg: "#1a1a3a", color: "#818cf8" },
-  Quiz: { bg: "#1a2a1a", color: "#34d399" },
+  Lab:        { bg: "#1a1a3a", color: "#818cf8" },
+  Quiz:       { bg: "#1a2a1a", color: "#34d399" },
   Assignment: { bg: "#2a1a00", color: "#f59e0b" },
-  Exam: { bg: "#2a1a1a", color: "#f472b6" },
+  Exam:       { bg: "#2a1a1a", color: "#f472b6" },
+  Midterm:    { bg: "#2a1a1a", color: "#f472b6" },
 };
+
+function formatDueDate(due_date: string, due_time?: string | null): string {
+  if (!due_date || due_date === "TBD") return "TBD";
+  // Convert YYYY-MM-DD to readable format
+  const [year, month, day] = due_date.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+  const dateStr = date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  if (due_time) {
+    // Convert 24hr to 12hr
+    const [h, m] = due_time.split(":").map(Number);
+    const ampm = h >= 12 ? "PM" : "AM";
+    const hour = h % 12 || 12;
+    return `${dateStr} at ${hour}:${String(m).padStart(2, "0")} ${ampm}`;
+  }
+  return dateStr;
+}
+
+function isOverdue(due_date: string, due_time?: string | null): boolean {
+  if (!due_date || due_date === "TBD") return false;
+  const [year, month, day] = due_date.split("-").map(Number);
+  const due = new Date(year, month - 1, day);
+  if (due_time) {
+    const [h, m] = due_time.split(":").map(Number);
+    due.setHours(h, m, 0, 0);
+  } else {
+    due.setHours(23, 59, 59, 999);
+  }
+  return due < new Date();
+}
 
 interface TaskTableProps {
   tasks: Task[];
@@ -28,8 +58,10 @@ export default function TaskTable({ tasks, onToggle }: TaskTableProps) {
       <tbody>
         {tasks.map((task) => {
           const typeStyle = TYPE_COLORS[task.type] ?? TYPE_COLORS.Assignment;
+          const overdue = !task.completed && isOverdue(task.due_date, task.due_time);
+          const strike = task.completed || overdue;
           return (
-            <tr key={task.id} className={styles.row}>
+            <tr key={task.id} className={`${styles.row} ${overdue ? styles.overdueRow : ""}`}>
               <td className={styles.td}>
                 <button
                   className={`${styles.checkbox} ${task.completed ? styles.checked : ""}`}
@@ -37,8 +69,11 @@ export default function TaskTable({ tasks, onToggle }: TaskTableProps) {
                   aria-label="Toggle task"
                 />
               </td>
-              <td className={`${styles.td} ${styles.taskName} ${task.completed ? styles.strikethrough : ""}`}>
+              <td className={`${styles.td} ${styles.taskName} ${strike ? styles.strikethrough : ""}`}>
                 {task.title}
+                {overdue && !task.completed && (
+                  <span className={styles.overdueTag}>Overdue</span>
+                )}
               </td>
               <td className={styles.td}>
                 <span
@@ -49,7 +84,9 @@ export default function TaskTable({ tasks, onToggle }: TaskTableProps) {
                 </span>
               </td>
               <td className={styles.td}>
-                <span className={styles.dueDate}>⏱ {task.due_date}</span>
+                <span className={`${styles.dueDate} ${overdue && !task.completed ? styles.overdueDate : ""}`}>
+                  ⏱ {formatDueDate(task.due_date, task.due_time)}
+                </span>
               </td>
               <td className={styles.td}>
                 <span className={styles.weight}>{task.weight}</span>

@@ -33,23 +33,35 @@ function getWeekDays(offsetWeeks: number) {
 const SHORT_MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-function getUrgency(year: number, month: number, date: number): "overdue" | "today" | "soon" | "upcoming" {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+// Now accounts for due_time when checking overdue
+function getUrgency(
+  year: number, month: number, date: number, due_time?: string | null
+): "overdue" | "today" | "soon" | "upcoming" {
+  const now = new Date();
   const due = new Date(year, month, date);
-  const diffDays = Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
-  if (diffDays < 0) return "overdue";
+  if (due_time) {
+    const [h, m] = due_time.split(":").map(Number);
+    due.setHours(h, m, 0, 0);
+  } else {
+    due.setHours(23, 59, 59, 999);
+  }
+
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dueMidnight = new Date(year, month, date);
+  const diffDays = Math.ceil((dueMidnight.getTime() - todayMidnight.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (due < now) return "overdue";
   if (diffDays === 0) return "today";
   if (diffDays <= 3) return "soon";
   return "upcoming";
 }
 
 const URGENCY_STYLES: Record<string, { bg: string; color: string; border: string }> = {
-  overdue: { bg: "#2a1a1a", color: "#ef4444", border: "#ef4444" },
-  today:   { bg: "#2a1a00", color: "#f59e0b", border: "#f59e0b" },
-  soon:    { bg: "#1a2a1a", color: "#34d399", border: "#34d399" },
-  upcoming:{ bg: "#1e1a3a", color: "#7c6fcd", border: "#7c6fcd" },
+  overdue:  { bg: "#2a1a1a", color: "#ef4444", border: "#ef4444" },
+  today:    { bg: "#2a1a00", color: "#f59e0b", border: "#f59e0b" },
+  soon:     { bg: "#1a2a1a", color: "#34d399", border: "#34d399" },
+  upcoming: { bg: "#1e1a3a", color: "#7c6fcd", border: "#7c6fcd" },
 };
 
 export default function WeekCalendar({ tasks = [] }: WeekCalendarProps) {
@@ -98,7 +110,6 @@ export default function WeekCalendar({ tasks = [] }: WeekCalendarProps) {
 
       {!expanded && (
         <>
-          {/* Urgency Legend */}
           <div className={styles.legend}>
             {Object.entries(URGENCY_STYLES).map(([key, val]) => (
               <div key={key} className={styles.legendItem}>
@@ -117,16 +128,19 @@ export default function WeekCalendar({ tasks = [] }: WeekCalendarProps) {
                   <p className={styles.dayLabel}>{d.day}</p>
                   <p className={styles.dateNum}>{d.date}</p>
                   {dueTasks.map((t, i) => {
-                    const urgency = getUrgency(d.year, d.month, d.date);
+                    const urgency = getUrgency(d.year, d.month, d.date, t.due_time);
                     const s = URGENCY_STYLES[urgency];
                     return (
                       <div
                         key={i}
                         className={styles.timePill}
                         style={{ background: s.bg, color: s.color, borderColor: s.border }}
-                        title={t.title}
+                        title={`${t.title}${t.due_time ? ` — due at ${t.due_time}` : ""}`}
                       >
-                        {urgency === "overdue" ? "Overdue" : urgency === "today" ? "Due Today" : urgency === "soon" ? "Due Soon" : "Due"}
+                        {urgency === "overdue" ? "Overdue"
+                          : urgency === "today" ? `Due ${t.due_time ?? "Today"}`
+                          : urgency === "soon" ? "Due Soon"
+                          : t.due_time ?? "Due"}
                       </div>
                     );
                   })}
@@ -167,12 +181,14 @@ export default function WeekCalendar({ tasks = [] }: WeekCalendarProps) {
                       {cells.map((day, i) => {
                         if (!day) return <div key={`e-${i}`} />;
                         const dueTasks = getTasksForDay(year, month, day);
-                        const urgency = dueTasks.length > 0 ? getUrgency(year, month, day) : null;
+                        const urgency = dueTasks.length > 0
+                          ? getUrgency(year, month, day, dueTasks[0].due_time)
+                          : null;
                         return (
                           <div
                             key={day}
                             className={`${styles.calCell} ${isToday(year, month, day) ? styles.todayCell : ""} ${dueTasks.length > 0 ? styles.dueCell : ""}`}
-                            title={dueTasks.map(t => t.title).join(", ")}
+                            title={dueTasks.map(t => `${t.title}${t.due_time ? ` @ ${t.due_time}` : ""}`).join(", ")}
                           >
                             {day}
                             {urgency && <span className={styles.dueDot} style={{ background: URGENCY_STYLES[urgency].color }} />}
