@@ -44,8 +44,8 @@
 }
 
 .checkbox.checked {
-  background: #7c6fcd;
-  border-color: #7c6fcd;
+  background: #34d399;
+  border-color: #34d399;
 }
 
 .taskName {
@@ -80,7 +80,12 @@
   opacity: 0.75;
 }
 
+.completedRow {
+  background: transparent;
+}
+
 .overdueTag {
+  display: inline-block;
   margin-left: 8px;
   font-size: 10px;
   font-weight: 600;
@@ -88,10 +93,44 @@
   background: #2a1a1a;
   border: 1px solid #ef4444;
   border-radius: 99px;
-  padding: 2px 7px;
+  padding: 1px 7px;
   vertical-align: middle;
 }
 
 .overdueDate {
   color: #ef4444;
+}
+
+.completedTag {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #34d399;
+  background: #1a2a1a;
+  border: 1px solid #34d399;
+  border-radius: 99px;
+  padding: 1px 7px;
+  vertical-align: middle;
+}
+
+.completedDate {
+  color: #34d399;
+}
+
+.editBtn {
+  background: transparent;
+  border: 1px solid #2a2d3a;
+  color: #7c6fcd;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.editBtn:hover {
+  background: #1e1a3a;
+  border-color: #7c6fcd;
 }

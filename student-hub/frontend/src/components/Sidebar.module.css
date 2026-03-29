@@ -158,6 +158,7 @@
   cursor: pointer;
   margin-bottom: 2px;
   transition: background 0.15s, color 0.15s;
+  
 }
 
 .quickItem:hover {
@@ -294,4 +295,9 @@
 
 .removeBtn:hover {
   background: #dc2626;
+}
+
+.quickItem.active {
+  background: #1e2038;
+  color: #ffffff;
 }

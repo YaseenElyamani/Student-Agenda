@@ -9,7 +9,7 @@ import styles from "./Calendar.module.css";
 interface CalendarProps {
   courses: CourseInfo[];
   activeCourseId: number | null;
-  onSelectCourse: (id: number) => void;
+  onSelectCourse: (id: number | "all") => void;
   onAddCourse: () => void;
   onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
   onRemoveCourse: (id: number) => void;
@@ -18,6 +18,15 @@ interface CalendarProps {
 function parseLocalDate(dateStr: string): Date {
   const [year, month, day] = dateStr.split("-").map(Number);
   return new Date(year, month - 1, day);
+}
+
+function formatTime(due_time?: string | null): string {
+  if (!due_time || due_time === "null" || !due_time.includes(":")) return "";
+  const [h, m] = due_time.split(":").map(Number);
+  if (isNaN(h) || isNaN(m)) return "";
+  const ampm = h >= 12 ? "PM" : "AM";
+  const hour = h % 12 || 12;
+  return `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
 }
 
 const MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
@@ -161,30 +170,23 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
               upcomingTasks.map((t, i) => {
                 const due = parseLocalDate(t.due_date);
                 const dateLabel = `${SHORT_MONTH_NAMES[due.getMonth()]} ${due.getDate()}`;
+                const timeLabel = formatTime(t.due_time);
                 return (
                   <div key={i} className={styles.upcomingItem}>
                     <div className={styles.upcomingBar} style={{ background: t.courseColor }} />
                     <div className={styles.upcomingInfo}>
-                        <p className={styles.upcomingName}>{t.title}</p>
-                        <p className={styles.upcomingMeta}>
+                      <p className={styles.upcomingName}>{t.title}</p>
+                      <p className={styles.upcomingMeta}>
                         {t.courseCode} • {dateLabel}
-                        {t.due_time && t.due_time !== "null" && t.due_time.includes(":") && (() => {
-                            const [h, m] = t.due_time!.split(":").map(Number);
-                            if (isNaN(h) || isNaN(m)) return null;
-                            const ampm = h >= 12 ? "PM" : "AM";
-                            const hour = h % 12 || 12;
-                            return (
-                            <span style={{ color: "#7c6fcd", fontWeight: 600 }}>
-                                {" "}• {hour}:{String(m).padStart(2, "0")} {ampm}
-                            </span>
-                            );
-                        })()}
-                        </p>
+                        {timeLabel && (
+                          <span style={{ color: "#7c6fcd", fontWeight: 600 }}> • {timeLabel}</span>
+                        )}
+                      </p>
                     </div>
                     <div className={styles.upcomingRight}>
-                        <span className={styles.upcomingWeight}>{t.weight}</span>
+                      <span className={styles.upcomingWeight}>{t.weight}</span>
                     </div>
-                    </div>
+                  </div>
                 );
               })
             )}

@@ -239,3 +239,34 @@
   border-color: #7c6fcd;
   background: #1e1a3a;
 }
+
+.editModeBtn {
+  background: transparent;
+  border: 1px solid #2a2d3a;
+  color: #7c6fcd;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.editModeBtn:hover {
+  border-color: #7c6fcd;
+  background: #1e1a3a;
+}
+
+.editModeActiveBtn {
+  background: #7c6fcd;
+  border: 1px solid #7c6fcd;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.editModeActiveBtn:hover {
+  background: #6d63cc;
+}

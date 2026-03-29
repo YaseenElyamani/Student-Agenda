@@ -5,13 +5,14 @@ import { useState } from "react";
 
 interface SidebarProps {
   courses: CourseInfo[];
-  activeCourseId: number | null;
+  activeCourseId: number | "all" | null;
   onSelectCourse: (id: number | "all") => void;
   onAddCourse: () => void;
   onRemoveCourse: (id: number) => void;
+  completedIds?: Set<number>;
 }
 
-export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAddCourse, onRemoveCourse }: SidebarProps) {
+export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAddCourse, onRemoveCourse, completedIds }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [hoveredCourseId, setHoveredCourseId] = useState<number | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
@@ -19,6 +20,12 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
   const location = useLocation();
 
   const courseToDelete = courses.find(c => c.id === confirmDeleteId);
+
+  const totalTasks = courses.reduce((acc, c) => acc + c.tasks.length, 0);
+  const completedCount = completedIds
+    ? courses.reduce((acc, c) => acc + c.tasks.filter(t => completedIds.has(t.id)).length, 0)
+    : courses.reduce((acc, c) => acc + c.tasks.filter(t => t.completed).length, 0);
+  const progressPct = totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
 
   return (
     <div className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""}`}>
@@ -60,7 +67,7 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
         <div className={styles.section}>
           <p className={styles.sectionLabel}>NAVIGATION</p>
           <div
-            className={`${styles.quickItem} ${location.pathname === "/dashboard" && activeCourseId === null ? styles.active : ""}`}
+            className={`${styles.quickItem} ${location.pathname === "/dashboard" ? styles.active : ""}`}
             onClick={() => { onSelectCourse("all"); navigate("/dashboard"); }}
           >
             <span>🏠</span> Dashboard
@@ -126,17 +133,15 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
         {!collapsed ? (
           <>
             <p className={styles.footerLabel}>Tasks Due</p>
-            <div className={styles.footerCount}>
-              {courses.reduce((acc, c) => acc + c.tasks.length, 0)}
-            </div>
+            <div className={styles.footerCount}>{totalTasks - completedCount}</div>
             <div className={styles.progressBar}>
-              <div className={styles.progressFill} style={{ width: "37.5%" }} />
+              <div className={styles.progressFill} style={{ width: `${progressPct}%` }} />
             </div>
-            <p className={styles.footerSub}>Upload a syllabus to begin</p>
+            <p className={styles.footerSub}>{completedCount} of {totalTasks} completed</p>
           </>
         ) : (
           <div className={styles.progressBar}>
-            <div className={styles.progressFill} style={{ width: "37.5%" }} />
+            <div className={styles.progressFill} style={{ width: `${progressPct}%` }} />
           </div>
         )}
       </div>

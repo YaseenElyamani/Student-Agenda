@@ -14,6 +14,9 @@ interface DashboardProps {
   onSelectCourse: (id: number | "all") => void;
   onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
   onRemoveCourse: (id: number) => void;
+  completedIds: Set<number>;
+  onToggleTask: (id: number) => void;
+  onTaskUpdated: (updated: Task) => void;
 }
 
 function parseLocalDate(dateStr: string): Date {
@@ -48,9 +51,12 @@ export default function Dashboard({
   onSelectCourse,
   onCourseLoaded,
   onRemoveCourse,
+  completedIds,
+  onToggleTask,
+  onTaskUpdated,
 }: DashboardProps) {
-  const [completedIds, setCompletedIds] = useState<Set<number>>(new Set());
   const [showModal, setShowModal] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   const allTasks = courses.flatMap(c =>
     c.tasks.map(t => ({ ...t, courseCode: c.code, courseColor: c.color }))
@@ -66,25 +72,15 @@ export default function Dashboard({
   const in7Days = new Date(today);
   in7Days.setDate(today.getDate() + 7);
 
-  const upcomingTasks = (activeCourseId === "all" ? allTasks : allTasks.filter(t => t.course_id === activeCourseId))
+  const upcomingTasks = (activeCourseId === "all"
+    ? allTasks
+    : allTasks.filter(t => t.course_id === activeCourseId))
     .filter(t => {
       if (!t.due_date || t.due_date === "TBD") return false;
       const d = parseLocalDate(t.due_date);
       return d >= today && d <= in7Days && !completedIds.has(t.id);
     })
     .sort((a, b) => parseLocalDate(a.due_date).getTime() - parseLocalDate(b.due_date).getTime());
-
-  const toggleTask = (id: number) => {
-    setCompletedIds(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  };
 
   const handleCourseLoaded = (code: string, name: string, tasks: Task[]) => {
     onCourseLoaded(code, name, tasks);
@@ -102,6 +98,7 @@ export default function Dashboard({
         onSelectCourse={onSelectCourse}
         onAddCourse={() => setShowModal(true)}
         onRemoveCourse={onRemoveCourse}
+        completedIds={completedIds}
       />
 
       {showModal && (
@@ -116,7 +113,7 @@ export default function Dashboard({
           <h1 className={styles.heading}>Dashboard</h1>
           <p className={styles.subheading}>Everything you need, automatically organized</p>
 
-          <WeekCalendar tasks={allTasks} />
+          <WeekCalendar tasks={allTasks.map(t => ({ ...t, completed: completedIds.has(t.id) }))} />
 
           {upcomingTasks.length > 0 && (
             <div className={styles.upcomingCard}>
@@ -177,18 +174,31 @@ export default function Dashboard({
                   </p>
                 </div>
               </div>
-              {activeCourseId !== "all" && (
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <button
-                  className={styles.showAllBtn}
-                  onClick={() => onSelectCourse("all")}
+                  className={editMode ? styles.editModeActiveBtn : styles.editModeBtn}
+                  onClick={() => setEditMode(e => !e)}
                 >
-                  Show All Courses
+                  {editMode ? "✓ Done" : "✎ Edit Tasks"}
                 </button>
-              )}
+                {activeCourseId !== "all" && (
+                  <button
+                    className={styles.showAllBtn}
+                    onClick={() => onSelectCourse("all")}
+                  >
+                    Show All Courses
+                  </button>
+                )}
+              </div>
             </div>
 
             {filteredTasks.length > 0
-              ? <TaskTable tasks={filteredTasks} onToggle={toggleTask} />
+              ? <TaskTable
+                  tasks={filteredTasks}
+                  onToggle={onToggleTask}
+                  onTaskUpdated={onTaskUpdated}
+                  editMode={editMode}
+                />
               : <p className={styles.empty}>
                   {courses.length === 0 ? "Upload a syllabus to get started." : "No tasks for this course."}
                 </p>

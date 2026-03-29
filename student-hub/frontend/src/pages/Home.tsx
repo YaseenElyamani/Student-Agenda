@@ -7,8 +7,8 @@ import type { CourseInfo } from "../App";
 
 interface HomeProps {
   courses: CourseInfo[];
-  activeCourseId: number | null;
-  onSelectCourse: (id: number) => void;
+  activeCourseId: number | "all";
+  onSelectCourse: (id: number | "all") => void;
   onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
   onRemoveCourse: (id: number) => void;
 }

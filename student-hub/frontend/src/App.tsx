@@ -27,6 +27,7 @@ const COURSE_COLORS = [
 function App() {
   const [courses, setCourses] = useState<CourseInfo[]>([]);
   const [activeCourseId, setActiveCourseId] = useState<number | "all">("all");
+  const [completedIds, setCompletedIds] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,6 +42,10 @@ function App() {
           tasks: c.tasks,
         }));
         setCourses(restored);
+        const ids = new Set<number>(
+          restored.flatMap(c => c.tasks.filter(t => t.completed).map(t => t.id))
+        );
+        setCompletedIds(ids);
       })
       .catch(err => console.error("Failed to load courses:", err))
       .finally(() => setLoading(false));
@@ -67,6 +72,29 @@ function App() {
         });
       })
       .catch(err => console.error("Failed to delete course:", err));
+  };
+
+  const handleToggleTask = (id: number) => {
+    fetch(`http://localhost:5001/tasks/${id}/complete`, { method: "POST" })
+      .catch(err => console.error("Failed to toggle task:", err));
+    setCompletedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleTaskUpdated = (updated: Task) => {
+    setCourses(prev =>
+      prev.map(c => ({
+        ...c,
+        tasks: c.tasks.map(t => t.id === updated.id ? { ...t, ...updated } : t),
+      }))
+    );
   };
 
   const handleSelectCourse = (id: number | "all") => {
@@ -116,6 +144,9 @@ function App() {
             onSelectCourse={handleSelectCourse}
             onCourseLoaded={handleCourseLoaded}
             onRemoveCourse={handleRemoveCourse}
+            completedIds={completedIds}
+            onToggleTask={handleToggleTask}
+            onTaskUpdated={handleTaskUpdated}
           />
         } />
         <Route path="/calendar" element={

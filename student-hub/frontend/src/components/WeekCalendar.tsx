@@ -109,8 +109,8 @@ export default function WeekCalendar({ tasks = [] }: WeekCalendarProps) {
             <div key={`${d.year}-${d.month}-${d.date}`} className={`${styles.dayCol} ${todayDay ? styles.today : ""}`}>
               <p className={styles.dayLabel}>{d.day}</p>
               <p className={styles.dateNum}>{d.date}</p>
-              {dueTasks.map((t, i) => {
-                const urgency = getUrgency(d.year, d.month, d.date);
+              {dueTasks.filter(t => !t.completed).map((t, i) => {
+               const urgency = getUrgency(d.year, d.month, d.date);
                 const s = URGENCY_STYLES[urgency];
                 return (
                   <div
