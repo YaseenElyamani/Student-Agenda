@@ -9,16 +9,10 @@ import styles from "./Calendar.module.css";
 interface CalendarProps {
   courses: CourseInfo[];
   activeCourseId: number | null;
-<<<<<<< HEAD
   onSelectCourse: (id: number | "all") => void;
   onAddCourse: () => void;
   onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
   onRemoveCourse: (id: number) => void;
-=======
-  onSelectCourse: (id: number) => void;
-  onAddCourse: () => void;
-  onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
->>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
 }
 
 function parseLocalDate(dateStr: string): Date {
@@ -26,7 +20,6 @@ function parseLocalDate(dateStr: string): Date {
   return new Date(year, month - 1, day);
 }
 
-<<<<<<< HEAD
 function formatTime(due_time?: string | null): string {
   if (!due_time || due_time === "null" || !due_time.includes(":")) return "";
   const [h, m] = due_time.split(":").map(Number);
@@ -36,18 +29,12 @@ function formatTime(due_time?: string | null): string {
   return `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
 }
 
-=======
->>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
 const MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"];
 const SHORT_MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-<<<<<<< HEAD
 export default function Calendar({ courses, activeCourseId, onSelectCourse, onCourseLoaded, onRemoveCourse }: CalendarProps) {
-=======
-export default function Calendar({ courses, activeCourseId, onSelectCourse, onCourseLoaded }: CalendarProps) {
->>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
   const today = new Date();
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -71,15 +58,7 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
     });
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-<<<<<<< HEAD
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-=======
-  const firstDayOfMonth = (() => {
-    const day = new Date(currentYear, currentMonth, 1).getDay();
-    return (day + 6) % 7; // Monday = 0
-  })();
-
->>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
   const cells = Array(firstDayOfMonth).fill(null).concat(
     Array.from({ length: daysInMonth }, (_, i) => i + 1)
   );
@@ -94,10 +73,6 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
     else setCurrentMonth(m => m + 1);
   };
 
-<<<<<<< HEAD
-=======
-  // Upcoming tasks sorted by date
->>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
   const upcomingTasks = allTasks
     .filter(t => {
       if (!t.due_date || t.due_date === "TBD") return false;
@@ -118,10 +93,7 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
         activeCourseId={activeCourseId}
         onSelectCourse={(id) => { onSelectCourse(id); navigate("/dashboard"); }}
         onAddCourse={() => setShowModal(true)}
-<<<<<<< HEAD
         onRemoveCourse={onRemoveCourse}
-=======
->>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
       />
 
       {showModal && (
@@ -133,10 +105,6 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
           <h1 className={styles.heading}>Unified Calendar</h1>
           <p className={styles.subheading}>View all your assignments and deadlines</p>
 
-<<<<<<< HEAD
-=======
-          {/* Course Filter */}
->>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
           <div className={styles.filterRow}>
             <span className={styles.filterLabel}>⚙ Filter by course:</span>
             <button
@@ -158,10 +126,6 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
             ))}
           </div>
 
-<<<<<<< HEAD
-=======
-          {/* Calendar */}
->>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
           <div className={styles.calendarCard}>
             <div className={styles.calendarHeader}>
               <h2 className={styles.monthTitle}>{MONTH_NAMES[currentMonth]} {currentYear}</h2>
@@ -198,10 +162,6 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
             </div>
           </div>
 
-<<<<<<< HEAD
-=======
-          {/* Upcoming Assignments */}
->>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
           <div className={styles.upcomingCard}>
             <h2 className={styles.upcomingTitle}>Upcoming Assignments</h2>
             {upcomingTasks.length === 0 ? (
@@ -210,25 +170,18 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
               upcomingTasks.map((t, i) => {
                 const due = parseLocalDate(t.due_date);
                 const dateLabel = `${SHORT_MONTH_NAMES[due.getMonth()]} ${due.getDate()}`;
-<<<<<<< HEAD
                 const timeLabel = formatTime(t.due_time);
-=======
->>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
                 return (
                   <div key={i} className={styles.upcomingItem}>
                     <div className={styles.upcomingBar} style={{ background: t.courseColor }} />
                     <div className={styles.upcomingInfo}>
                       <p className={styles.upcomingName}>{t.title}</p>
-<<<<<<< HEAD
                       <p className={styles.upcomingMeta}>
                         {t.courseCode} • {dateLabel}
                         {timeLabel && (
                           <span style={{ color: "#7c6fcd", fontWeight: 600 }}> • {timeLabel}</span>
                         )}
                       </p>
-=======
-                      <p className={styles.upcomingMeta}>{t.courseCode} • {dateLabel}</p>
->>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
                     </div>
                     <div className={styles.upcomingRight}>
                       <span className={styles.upcomingWeight}>{t.weight}</span>

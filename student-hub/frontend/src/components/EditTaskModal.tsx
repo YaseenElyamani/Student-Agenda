@@ -83,7 +83,6 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete }: EditT
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
 
-        {/* Confirm Delete Screen */}
         {confirmDelete ? (
           <>
             <div className={styles.header}>

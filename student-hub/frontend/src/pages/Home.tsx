@@ -6,7 +6,6 @@ import type { Task } from "../types/Task";
 import type { CourseInfo } from "../App";
 
 interface HomeProps {
-<<<<<<< HEAD
   courses: CourseInfo[];
   activeCourseId: number | "all";
   onSelectCourse: (id: number | "all") => void;
@@ -15,12 +14,6 @@ interface HomeProps {
 }
 
 export default function Home({ courses, activeCourseId, onSelectCourse, onCourseLoaded, onRemoveCourse }: HomeProps) {
-=======
-  onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
-}
-
-export default function Home({ onCourseLoaded }: HomeProps) {
->>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -44,6 +37,12 @@ export default function Home({ onCourseLoaded }: HomeProps) {
         body: formData,
       });
       const data = await res.json();
+
+      if (res.status === 409) {
+        setError(data.error || "This course is already added.");
+        setLoading(false);
+        return;
+      }
 
       if (!res.ok) {
         setError(data.error || "Something went wrong.");
@@ -89,7 +88,6 @@ export default function Home({ onCourseLoaded }: HomeProps) {
 
   return (
     <div className={styles.layout}>
-<<<<<<< HEAD
       <Sidebar
         courses={courses}
         activeCourseId={activeCourseId}
@@ -97,9 +95,6 @@ export default function Home({ onCourseLoaded }: HomeProps) {
         onAddCourse={() => fileInputRef.current?.click()}
         onRemoveCourse={onRemoveCourse}
       />
-=======
-      <Sidebar courses={[]} activeCourseId={null} onSelectCourse={() => {}} onAddCourse={() => fileInputRef.current?.click()} />
->>>>>>> 43e6732 (finished on most of the frontend, calendar complete etc.., now work on backend)
 
       <main className={styles.main}>
         <div className={styles.content}>
