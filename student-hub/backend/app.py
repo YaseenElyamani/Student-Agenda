@@ -1,6 +1,5 @@
 import os
 import json
-import sqlite3
 import fitz
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -39,7 +38,7 @@ class Task(db.Model):
     title = db.Column(db.String(200), nullable=False)
     type = db.Column(db.String(50), default="Assignment")
     due_date = db.Column(db.String(20))
-    due_time = db.Column(db.String(10))   # e.g., "23:59" or null
+    due_time = db.Column(db.String(10))
     weight = db.Column(db.String(20))
     completed = db.Column(db.Boolean, default=False)
 
@@ -110,62 +109,52 @@ def parse_syllabus():
         chat_completion = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
-
-                {"role": "system",
-                 "content": ("You are a precise academic data extractor. "
-                             "Extract course info and graded items into valid JSON. "
-                             "If year is missing, assume 2026.")},
-                {"role": "user",
-                 "content": f"""
-                 Extract all graded items from this syllabus.
-                 Return JSON ONLY with this structure:
-                 {{
-                     "course_code": "",
-                     "course_name": "",
-                     "tasks": [
-                         {{
-                             "title": "",
-                             "type": "Assignment",
-                             "due_date": "YYYY-MM-DD",
-                             "due_time": "HH:MM or null",
-                             "weight": "0%"
-                         }}
-                     ]
-                 }}
-                 Syllabus Content:
-                 {context_text}
-                 """},
                 {
                     "role": "system",
                     "content": (
                         "You are a precise academic data extractor. "
-                        "Extract course information and graded items into valid JSON. "
+                        "Extract course information and all graded items into valid JSON. "
                         "If a year is missing, assume 2026."
                     )
                 },
                 {
                     "role": "user",
                     "content": f"""
-                    Extract all graded items from this syllabus. Look for assignments, quizzes, exams, labs, and midterms.
-                    Check the weekly schedule table for due dates. Check the grading/evaluation section for weights.
-                    Return ONLY a JSON object with this exact structure, no explanation:
-                    {{
-                      "course_code": "e.g. CP363",
-                      "course_name": "e.g. Database I",
-                      "tasks": [
-                        {{
-                          "title": "Assignment 1: Simple Queries",
-                          "type": "Assignment",
-                          "due_date": "2026-01-31",
-                          "weight": "10%"
-                        }}
-                      ]
-                    }}
-                    Valid types are: Assignment, Quiz, Exam, Lab, Midterm.
-                    If a weight applies to a category (e.g. Assignments 50%), divide it evenly across all items in that category.
-                    If no specific due date exists, use TBD.
-                    Syllabus Content:
-                    {context_text}
+Extract all graded items from this syllabus.
+Return JSON ONLY with this exact structure, no explanation:
+{{
+    "course_code": "e.g. CP363",
+    "course_name": "e.g. Database I",
+    "tasks": [
+        {{
+            "title": "Assignment 1: Simple Queries",
+            "type": "Assignment",
+            "due_date": "2026-01-31",
+            "due_time": "HH:MM or null",
+            "weight": "10%"
+        }}
+    ]
+}}
+
+IMPORTANT RULES:
+- Valid types are: Assignment, Quiz, Exam, Lab, Midterm, Final Exam, Discussion
+- For recurring weekly tasks like discussion posts, participation, or weekly responses:
+  * Create a SEPARATE task entry for EACH occurrence
+  * Title them like "Discussion Post - Week 1", "Discussion Post - Week 2", etc.
+  * Look at the weekly schedule to find which specific weeks have them and which don't (e.g. no post during midterm week or reading week)
+  * If total weight is given for all posts combined (e.g. 20% total for 10 posts), divide evenly per post (2% each)
+- For one-time tasks (assignments, exams, quizzes), create one entry each
+- Extract due dates from the weekly schedule table if present OR IF NOT CHECK MORE OF THE PDF for due dates (e.g. "Assignment 1 due Jan 31" in the text)
+- If no specific due date exists, use TBD
+- If no specific due time exists, use null
+- due_time must ALWAYS be in 24-hour "HH:MM" format (e.g. "23:59", "10:30") or null
+- NEVER store text like "in-class time" or "TBD" in due_time — use null instead  
+- If the syllabus says "11:59 pm", store as "23:59". If it says "10:30 am", store as "10:30"
+
+- If multiple sections exist with different times, use the first/earliest section's time
+- Final exam dates may show up in a range, if so, don't use any date and put TBD instead
+Syllabus Content:
+{context_text}
                     """
                 }
             ],
@@ -293,6 +282,4 @@ def toggle_complete(task_id):
 
 # ─── Run app ───────────────────────────────────────────
 if __name__ == "__main__":
-    # ⚠ Delete old DB manually if you have schema issues
-    # os.remove("tasks.db")
     app.run(debug=True, port=5001)
