@@ -1,0 +1,11 @@
+flask
+flask-cors
+flask-sqlalchemy
+flask-jwt-extended
+flask-limiter
+google-genai
+werkzeug
+requests
+python-dotenv
+resend
+psycopg2-binary
