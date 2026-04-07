@@ -27,5 +27,3 @@ dist-ssr
 
 # Environment variables
 .env
-
-*.instance/tasks.db
