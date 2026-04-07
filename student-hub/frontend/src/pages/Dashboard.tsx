@@ -20,6 +20,9 @@ interface DashboardProps {
   onTaskUpdated: (updated: Task) => void;
   onTaskDeleted: (id: number) => void;
   onTaskAdded: (task: Task) => void;
+  onLogout: () => void;
+  isGuest?: boolean;
+  token: string | null;
 }
 
 function parseLocalDate(dateStr: string): Date {
@@ -28,12 +31,18 @@ function parseLocalDate(dateStr: string): Date {
 }
 
 function formatTime(due_time?: string | null): string {
-  if (!due_time || due_time === "null" || !due_time.includes(":")) return "";
-  const [h, m] = due_time.split(":").map(Number);
-  if (isNaN(h) || isNaN(m)) return "";
-  const ampm = h >= 12 ? "PM" : "AM";
-  const hour = h % 12 || 12;
-  return `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
+  if (!due_time || due_time === "null") return "";
+  if (due_time.toLowerCase().includes("am") || due_time.toLowerCase().includes("pm")) {
+    return due_time.trim();
+  }
+  if (due_time.includes(":")) {
+    const [h, m] = due_time.split(":").map(Number);
+    if (isNaN(h) || isNaN(m)) return "";
+    const ampm = h >= 12 ? "PM" : "AM";
+    const hour = h % 12 || 12;
+    return `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
+  }
+  return "";
 }
 
 function exportToICS(courses: CourseInfo[]) {
@@ -48,43 +57,35 @@ function exportToICS(courses: CourseInfo[]) {
   courses.forEach(course => {
     course.tasks.forEach(task => {
       if (!task.due_date || task.due_date === "TBD") return;
-
       const [year, month, day] = task.due_date.split("-").map(Number);
+      const pad = (n: number) => String(n).padStart(2, "0");
       let dtstart: string;
       let dtend: string;
 
       if (task.due_time && task.due_time !== "null" && task.due_time.includes(":")) {
         const [h, m] = task.due_time.split(":").map(Number);
-        const pad = (n: number) => String(n).padStart(2, "0");
         const dateStr = `${year}${pad(month)}${pad(day)}T${pad(h)}${pad(m)}00`;
         dtstart = `DTSTART:${dateStr}`;
-        // end 1 hour later
         const endH = h + 1 >= 24 ? 23 : h + 1;
         dtend = `DTEND:${year}${pad(month)}${pad(day)}T${pad(endH)}${pad(m)}00`;
       } else {
-        const pad = (n: number) => String(n).padStart(2, "0");
         dtstart = `DTSTART;VALUE=DATE:${year}${pad(month)}${pad(day)}`;
         dtend = `DTEND;VALUE=DATE:${year}${pad(month)}${pad(day)}`;
       }
 
-      const uid = `task-${task.id}-${course.code}@studhub`;
-      const summary = `SUMMARY:${course.code}: ${task.title}`;
-      const description = `DESCRIPTION:Type: ${task.type} | Weight: ${task.weight}`;
-
       lines.push(
         "BEGIN:VEVENT",
-        uid,
+        `UID:task-${task.id}-${course.code}@studhub`,
         dtstart,
         dtend,
-        summary,
-        description,
+        `SUMMARY:${course.code}: ${task.title}`,
+        `DESCRIPTION:Type: ${task.type} | Weight: ${task.weight}`,
         "END:VEVENT"
       );
     });
   });
 
   lines.push("END:VCALENDAR");
-
   const blob = new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -118,6 +119,8 @@ export default function Dashboard({
   onTaskUpdated,
   onTaskDeleted,
   onTaskAdded,
+  onLogout,
+  isGuest,
 }: DashboardProps) {
   const [showModal, setShowModal] = useState(false);
   const [showAddTask, setShowAddTask] = useState(false);
@@ -164,6 +167,8 @@ export default function Dashboard({
         onAddCourse={() => setShowModal(true)}
         onRemoveCourse={onRemoveCourse}
         completedIds={completedIds}
+        onLogout={onLogout}
+        isGuest={isGuest}
       />
 
       {showModal && (
@@ -248,7 +253,7 @@ export default function Dashboard({
                   </p>
                 </div>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
                 <button
                   className={styles.exportBtn}
                   onClick={() => exportToICS(courses)}
@@ -277,6 +282,23 @@ export default function Dashboard({
                   </button>
                 )}
               </div>
+            </div>
+
+            <div className={styles.filterRow}>
+              {courses.map(c => (
+                <button
+                  key={c.id}
+                  className={`${styles.filterBtn} ${activeCourseId === c.id ? styles.filterActive : ""}`}
+                  style={activeCourseId === c.id
+                    ? { background: c.color + "33", borderColor: c.color, color: c.color }
+                    : { borderColor: c.color + "66", color: c.color }
+                  }
+                  onClick={() => onSelectCourse(c.id)}
+                >
+                  <span className={styles.filterDot} style={{ background: c.color }} />
+                  {c.code}
+                </button>
+              ))}
             </div>
 
             {filteredTasks.length > 0

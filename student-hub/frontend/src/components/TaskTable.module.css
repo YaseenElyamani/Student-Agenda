@@ -134,3 +134,94 @@
   background: #1e1a3a;
   border-color: #7c6fcd;
 }
+
+/* Mobile cards — hidden on desktop */
+.mobileCards {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .table {
+    display: none;
+  }
+
+  .mobileCards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 0;
+  }
+
+  .mobileSelectAll {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 4px 8px;
+    border-bottom: 1px solid #1e2028;
+    margin-bottom: 4px;
+  }
+
+  .mobileSelectLabel {
+    color: #4a4f62;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .mobileCard {
+    background: #15171f;
+    border-radius: 10px;
+    padding: 14px;
+    border: 1px solid #1e2028;
+    border-left: 3px solid #2a2d3a;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: background 0.1s;
+  }
+
+  .mobileCardOverdue {
+    border-left-color: #ef4444 !important;
+    opacity: 0.85;
+  }
+
+  .mobileCardCompleted {
+    opacity: 0.5;
+    border-left-color: #34d399 !important;
+  }
+
+  .mobileCardTop {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .mobileCardInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .mobileCardTitle {
+    color: #e5e7eb;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .mobileCardMeta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .mobileCardBottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px solid #1e2028;
+  }
+}

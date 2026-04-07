@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Calendar from "./pages/Calendar";
+import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import type { Task } from "./types/Task";
 
 export interface CourseInfo {
@@ -29,11 +32,34 @@ function App() {
   const [activeCourseId, setActiveCourseId] = useState<number | "all">("all");
   const [completedIds, setCompletedIds] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(localStorage.getItem("studhub_token"));
+  const [isGuest, setIsGuest] = useState(false);
+  const [sessionExpired, setSessionExpired] = useState(false);
+
+  const isAuthenticated = !!token || isGuest;
 
   useEffect(() => {
-    fetch("http://localhost:5001/courses/full")
-      .then(res => res.json())
+    if (!token) {
+      setLoading(false);
+      setCourses([]);
+      setCompletedIds(new Set());
+      return;
+    }
+
+    let cancelled = false;
+
+    fetch("http://localhost:5001/courses/full", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.status === 401 ? null : res.json())
       .then(data => {
+        if (cancelled) return;
+        if (!data) {
+          localStorage.removeItem("studhub_token");
+          setToken(null);
+          setLoading(false);
+          return;
+        }
         const restored: CourseInfo[] = data.map((c: CourseInfo, i: number) => ({
           id: c.id,
           code: c.code,
@@ -42,14 +68,58 @@ function App() {
           tasks: c.tasks,
         }));
         setCourses(restored);
-        const ids = new Set<number>(
+        setCompletedIds(new Set<number>(
           restored.flatMap(c => c.tasks.filter(t => t.completed).map(t => t.id))
-        );
-        setCompletedIds(ids);
+        ));
+        setLoading(false);
       })
-      .catch(err => console.error("Failed to load courses:", err))
-      .finally(() => setLoading(false));
+      .catch(err => {
+        if (!cancelled) {
+          console.error("Failed to load courses:", err);
+          setLoading(false);
+        }
+      });
+
+    return () => { cancelled = true; };
+  }, [token]);
+
+  useEffect(() => {
+    const handleExpired = () => {
+      localStorage.removeItem("studhub_token");
+      setToken(null);
+      setIsGuest(false);
+      setCourses([]);
+      setCompletedIds(new Set());
+      setSessionExpired(true);
+    };
+
+    window.addEventListener("studhub:session-expired", handleExpired);
+    return () => window.removeEventListener("studhub:session-expired", handleExpired);
   }, []);
+
+  const handleLogin = (newToken: string) => {
+    setToken(newToken);
+    setIsGuest(false);
+    setCourses([]);
+    setCompletedIds(new Set());
+    setSessionExpired(false);
+  };
+
+  const handleGuest = () => {
+    setIsGuest(true);
+    setToken(null);
+    setCourses([]);
+    setCompletedIds(new Set());
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("studhub_token");
+    setToken(null);
+    setIsGuest(false);
+    setCourses([]);
+    setCompletedIds(new Set());
+    setActiveCourseId("all");
+  };
 
   const handleCourseLoaded = (code: string, name: string, tasks: Task[]) => {
     setCourses(prev => {
@@ -63,7 +133,10 @@ function App() {
   };
 
   const handleRemoveCourse = (id: number) => {
-    fetch(`http://localhost:5001/courses/${id}`, { method: "DELETE" })
+    fetch(`http://localhost:5001/courses/${id}`, {
+      method: "DELETE",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
       .then(() => {
         setCourses(prev => {
           const updated = prev.filter(c => c.id !== id);
@@ -75,8 +148,11 @@ function App() {
   };
 
   const handleToggleTask = (id: number) => {
-    fetch(`http://localhost:5001/tasks/${id}/complete`, { method: "POST" })
-      .catch(err => console.error("Failed to toggle task:", err));
+    fetch(`http://localhost:5001/tasks/${id}/complete`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    }).catch(err => console.error("Failed to toggle task:", err));
+
     setCompletedIds(prev => {
       const next = new Set(prev);
       if (next.has(id)) {
@@ -151,40 +227,88 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={
-          <Home
-            courses={courses}
-            activeCourseId={activeCourseId}
-            onSelectCourse={handleSelectCourse}
-            onCourseLoaded={handleCourseLoaded}
-            onRemoveCourse={handleRemoveCourse}
-          />
-        } />
-        <Route path="/dashboard" element={
-          <Dashboard
-            courses={courses}
-            activeCourse={activeCourse}
-            activeCourseId={activeCourseId}
-            onSelectCourse={handleSelectCourse}
-            onCourseLoaded={handleCourseLoaded}
-            onRemoveCourse={handleRemoveCourse}
-            completedIds={completedIds}
-            onToggleTask={handleToggleTask}
-            onTaskUpdated={handleTaskUpdated}
-            onTaskDeleted={handleTaskDeleted}
-            onTaskAdded={handleTaskAdded}
-          />
-        } />
-        <Route path="/calendar" element={
-          <Calendar
-            courses={courses}
-            activeCourseId={activeCourseId === "all" ? null : activeCourseId}
-            onSelectCourse={(id) => handleSelectCourse(id)}
-            onAddCourse={() => {}}
-            onCourseLoaded={handleCourseLoaded}
-            onRemoveCourse={handleRemoveCourse}
-          />
-        } />
+        <Route
+          path="/login"
+          element={
+            isAuthenticated
+              ? <Navigate to="/" replace />
+              : <Login
+                  onLogin={handleLogin}
+                  onGuest={handleGuest}
+                  sessionExpired={sessionExpired}
+                  onClearExpired={() => setSessionExpired(false)}
+                />
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
+        <Route
+          path="/reset-password"
+          element={<ResetPassword />}
+        />
+        <Route
+          path="/"
+          element={
+            !isAuthenticated
+              ? <Navigate to="/login" replace />
+              : courses.length > 0
+                ? <Navigate to="/dashboard" replace />
+                : <Home
+                    courses={courses}
+                    activeCourseId={activeCourseId}
+                    onSelectCourse={handleSelectCourse}
+                    onCourseLoaded={handleCourseLoaded}
+                    onRemoveCourse={handleRemoveCourse}
+                    onLogout={handleLogout}
+                    isGuest={isGuest}
+                  />
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            !isAuthenticated
+              ? <Navigate to="/login" replace />
+              : courses.length === 0
+                ? <Navigate to="/" replace />
+                : <Dashboard
+                    courses={courses}
+                    activeCourse={activeCourse}
+                    activeCourseId={activeCourseId}
+                    onSelectCourse={handleSelectCourse}
+                    onCourseLoaded={handleCourseLoaded}
+                    onRemoveCourse={handleRemoveCourse}
+                    completedIds={completedIds}
+                    onToggleTask={handleToggleTask}
+                    onTaskUpdated={handleTaskUpdated}
+                    onTaskDeleted={handleTaskDeleted}
+                    onTaskAdded={handleTaskAdded}
+                    onLogout={handleLogout}
+                    isGuest={isGuest}
+                    token={token}
+                  />
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            !isAuthenticated
+              ? <Navigate to="/login" replace />
+              : <Calendar
+                  courses={courses}
+                  activeCourseId={activeCourseId === "all" ? null : activeCourseId}
+                  onSelectCourse={handleSelectCourse}
+                  onAddCourse={() => {}}
+                  onCourseLoaded={handleCourseLoaded}
+                  onRemoveCourse={handleRemoveCourse}
+                  onLogout={handleLogout}
+                  isGuest={isGuest}
+                  completedIds={completedIds}
+                />
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

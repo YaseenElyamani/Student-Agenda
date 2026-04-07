@@ -11,9 +11,11 @@ interface HomeProps {
   onSelectCourse: (id: number | "all") => void;
   onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
   onRemoveCourse: (id: number) => void;
+  onLogout: () => void;
+  isGuest?: boolean;
 }
 
-export default function Home({ courses, activeCourseId, onSelectCourse, onCourseLoaded, onRemoveCourse }: HomeProps) {
+export default function Home({ courses, activeCourseId, onSelectCourse, onCourseLoaded, onRemoveCourse, onLogout, isGuest }: HomeProps) {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -22,18 +24,29 @@ export default function Home({ courses, activeCourseId, onSelectCourse, onCourse
 
   const handleFile = async (file: File) => {
     if (!file || file.type !== "application/pdf") {
-      setError("Please upload a PDF file.");
+      setError("Please upload a PDF file — other formats aren't supported.");
       return;
     }
+
+    if (file.size > 20 * 1024 * 1024) {
+      setError("File is too large. Please upload a PDF under 20MB.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     const formData = new FormData();
     formData.append("file", file);
 
+    const token = localStorage.getItem("studhub_token");
+    const headers: Record<string, string> = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
     try {
       const res = await fetch("http://localhost:5001/parse-syllabus", {
         method: "POST",
+        headers,
         body: formData,
       });
       const data = await res.json();
@@ -94,12 +107,23 @@ export default function Home({ courses, activeCourseId, onSelectCourse, onCourse
         onSelectCourse={onSelectCourse}
         onAddCourse={() => fileInputRef.current?.click()}
         onRemoveCourse={onRemoveCourse}
+        onLogout={onLogout}
+        isGuest={isGuest}
       />
 
       <main className={styles.main}>
         <div className={styles.content}>
           <h1 className={styles.heading}>Welcome to StudHub</h1>
           <p className={styles.subheading}>Upload a syllabus and let AI do the heavy lifting</p>
+
+          {isGuest && (
+            <div className={styles.guestWarning}>
+              👤 You're in guest mode — your data won't be saved after you sign out.
+              <button className={styles.signUpLink} onClick={onLogout}>
+                Create a free account →
+              </button>
+            </div>
+          )}
 
           <div
             className={`${styles.uploadZone} ${dragOver ? styles.dragOver : ""}`}

@@ -13,6 +13,9 @@ interface CalendarProps {
   onAddCourse: () => void;
   onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
   onRemoveCourse: (id: number) => void;
+  onLogout: () => void;
+  isGuest?: boolean;
+  completedIds?: Set<number>;
 }
 
 function parseLocalDate(dateStr: string): Date {
@@ -34,7 +37,7 @@ const MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
 const SHORT_MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-export default function Calendar({ courses, activeCourseId, onSelectCourse, onCourseLoaded, onRemoveCourse }: CalendarProps) {
+export default function Calendar({ courses, activeCourseId, onSelectCourse, onCourseLoaded, onRemoveCourse, onLogout, isGuest, completedIds = new Set() }: CalendarProps) {
   const today = new Date();
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -76,6 +79,7 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
   const upcomingTasks = allTasks
     .filter(t => {
       if (!t.due_date || t.due_date === "TBD") return false;
+      if (completedIds.has(t.id)) return false;
       return parseLocalDate(t.due_date) >= new Date(today.getFullYear(), today.getMonth(), today.getDate());
     })
     .sort((a, b) => parseLocalDate(a.due_date).getTime() - parseLocalDate(b.due_date).getTime())
@@ -94,6 +98,9 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
         onSelectCourse={(id) => { onSelectCourse(id); navigate("/dashboard"); }}
         onAddCourse={() => setShowModal(true)}
         onRemoveCourse={onRemoveCourse}
+        onLogout={onLogout}
+        isGuest={isGuest}
+        completedIds={completedIds}
       />
 
       {showModal && (

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Task } from "../types/Task";
 import styles from "./EditTaskModal.module.css";
+import { authFetch } from "../utils/authFetch";
 
 interface EditTaskModalProps {
   task: Task;
@@ -15,9 +16,7 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete }: EditT
   const [title, setTitle] = useState(task.title);
   const [type, setType] = useState(task.type);
   const [dueDate, setDueDate] = useState(task.due_date === "TBD" ? "" : task.due_date);
-  const [dueTime, setDueTime] = useState(
-    task.due_time && task.due_time !== "null" ? task.due_time : ""
-  );
+  const [dueTime, setDueTime] = useState(task.due_time && task.due_time !== "null" ? task.due_time : "");
   const [weight, setWeight] = useState(task.weight === "N/A" ? "" : task.weight);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,17 +24,13 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete }: EditT
   const [deleting, setDeleting] = useState(false);
 
   const handleSave = async () => {
-    if (!title.trim()) {
-      setError("Title is required.");
-      return;
-    }
+    if (!title.trim()) { setError("Title is required."); return; }
     setSaving(true);
     setError(null);
 
     try {
-      const res = await fetch(`http://localhost:5001/tasks/${task.id}`, {
+      const res = await authFetch(`http://localhost:5001/tasks/${task.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: title.trim(),
           type,
@@ -45,12 +40,7 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete }: EditT
         }),
       });
 
-      if (!res.ok) {
-        setError("Failed to save changes.");
-        setSaving(false);
-        return;
-      }
-
+      if (!res.ok) { setError("Failed to save changes."); setSaving(false); return; }
       const updated = await res.json();
       onSave(updated);
       onClose();
@@ -63,14 +53,10 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete }: EditT
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      const res = await fetch(`http://localhost:5001/tasks/${task.id}`, {
+      const res = await authFetch(`http://localhost:5001/tasks/${task.id}`, {
         method: "DELETE",
       });
-      if (!res.ok) {
-        setError("Failed to delete task.");
-        setDeleting(false);
-        return;
-      }
+      if (!res.ok) { setError("Failed to delete task."); setDeleting(false); return; }
       onDelete(task.id);
       onClose();
     } catch {
@@ -82,7 +68,6 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete }: EditT
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
-
         {confirmDelete ? (
           <>
             <div className={styles.header}>
@@ -92,9 +77,7 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete }: EditT
               Are you sure you want to delete <strong>"{task.title}"</strong>? This cannot be undone.
             </p>
             <div className={styles.actions}>
-              <button className={styles.cancelBtn} onClick={() => setConfirmDelete(false)}>
-                Cancel
-              </button>
+              <button className={styles.cancelBtn} onClick={() => setConfirmDelete(false)}>Cancel</button>
               <button className={styles.deleteConfirmBtn} onClick={handleDelete} disabled={deleting}>
                 {deleting ? "Deleting..." : "Yes, Delete"}
               </button>
@@ -105,11 +88,7 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete }: EditT
             <div className={styles.header}>
               <h2 className={styles.title}>Edit Task</h2>
               <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                <button
-                  className={styles.deleteBtn}
-                  onClick={() => setConfirmDelete(true)}
-                  title="Delete task"
-                >
+                <button className={styles.deleteBtn} onClick={() => setConfirmDelete(true)} title="Delete task">
                   🗑 Delete
                 </button>
                 <button className={styles.closeBtn} onClick={onClose}>✕</button>
@@ -118,56 +97,30 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete }: EditT
 
             <div className={styles.field}>
               <label className={styles.label}>Task Name</label>
-              <input
-                className={styles.input}
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                placeholder="Task name"
-              />
+              <input className={styles.input} value={title} onChange={e => setTitle(e.target.value)} placeholder="Task name" />
             </div>
 
             <div className={styles.row}>
               <div className={styles.field}>
                 <label className={styles.label}>Type</label>
-                <select
-                  className={styles.input}
-                  value={type}
-                  onChange={e => setType(e.target.value as Task["type"])}
-                >
-                  {TASK_TYPES.map(t => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
+                <select className={styles.input} value={type} onChange={e => setType(e.target.value as Task["type"])}>
+                  {TASK_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div className={styles.field}>
                 <label className={styles.label}>Weight</label>
-                <input
-                  className={styles.input}
-                  value={weight}
-                  onChange={e => setWeight(e.target.value)}
-                  placeholder="e.g. 10%"
-                />
+                <input className={styles.input} value={weight} onChange={e => setWeight(e.target.value)} placeholder="e.g. 10%" />
               </div>
             </div>
 
             <div className={styles.row}>
               <div className={styles.field}>
                 <label className={styles.label}>Due Date</label>
-                <input
-                  className={styles.input}
-                  type="date"
-                  value={dueDate}
-                  onChange={e => setDueDate(e.target.value)}
-                />
+                <input className={styles.input} type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} />
               </div>
               <div className={styles.field}>
                 <label className={styles.label}>Due Time</label>
-                <input
-                  className={styles.input}
-                  type="time"
-                  value={dueTime}
-                  onChange={e => setDueTime(e.target.value)}
-                />
+                <input className={styles.input} type="time" value={dueTime} onChange={e => setDueTime(e.target.value)} />
               </div>
             </div>
 

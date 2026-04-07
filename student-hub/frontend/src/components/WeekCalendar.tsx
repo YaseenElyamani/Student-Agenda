@@ -65,6 +65,7 @@ export default function WeekCalendar({ tasks = [] }: WeekCalendarProps) {
   const getTasksForDay = (year: number, month: number, date: number) =>
     tasks.filter(t => {
       if (!t.due_date || t.due_date === "TBD") return false;
+      if (t.completed) return false;
       const due = parseLocalDate(t.due_date);
       return due.getFullYear() === year && due.getMonth() === month && due.getDate() === date;
     });
@@ -79,7 +80,7 @@ export default function WeekCalendar({ tasks = [] }: WeekCalendarProps) {
           <span className={styles.icon}>📅</span>
           <span>This Week</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <div className={styles.headerRight}>
           <button className={styles.navBtn} onClick={() => setWeekOffset(o => o - 1)}>‹</button>
           <span className={styles.range}>{rangeLabel}</span>
           <button className={styles.navBtn} onClick={() => setWeekOffset(o => o + 1)}>›</button>
@@ -119,7 +120,7 @@ export default function WeekCalendar({ tasks = [] }: WeekCalendarProps) {
                     style={{ background: s.bg, color: s.color, borderColor: s.border }}
                     title={t.title}
                   >
-                    {urgency === "overdue" ? "Overdue" : urgency === "today" ? "Due Today" : urgency === "soon" ? "Due Soon" : "Due"}
+                    <span className={styles.pillTitle}>{t.title}</span>
                   </div>
                 );
               })}

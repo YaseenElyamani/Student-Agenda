@@ -7,6 +7,31 @@ interface UploadModalProps {
   onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
 }
 
+function getFriendlyError(status: number, serverMessage?: string): string {
+  if (serverMessage?.includes("already exists") || status === 409) {
+    return "This course is already in your dashboard.";
+  }
+  if (status === 401) {
+    return "Your session expired. Please sign in again.";
+  }
+  if (status === 429) {
+    return "Too many requests — please wait a moment and try again.";
+  }
+  if (status === 500) {
+    if (serverMessage?.toLowerCase().includes("quota")) {
+      return "AI service is temporarily unavailable. Please try again in a few minutes.";
+    }
+    if (serverMessage?.toLowerCase().includes("json")) {
+      return "The AI couldn't read this syllabus properly. Try a clearer PDF.";
+    }
+    return "Something went wrong on our end. Please try again.";
+  }
+  if (status === 0) {
+    return "Could not connect to the server. Make sure the backend is running.";
+  }
+  return serverMessage || "Something went wrong. Please try again.";
+}
+
 export default function UploadModal({ onClose, onCourseLoaded }: UploadModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -15,9 +40,15 @@ export default function UploadModal({ onClose, onCourseLoaded }: UploadModalProp
 
   const handleFile = async (file: File) => {
     if (!file || file.type !== "application/pdf") {
-      setError("Please upload a PDF file.");
+      setError("Please upload a PDF file — other formats aren't supported.");
       return;
     }
+
+    if (file.size > 20 * 1024 * 1024) {
+      setError("File is too large. Please upload a PDF under 20MB.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -25,20 +56,17 @@ export default function UploadModal({ onClose, onCourseLoaded }: UploadModalProp
     formData.append("file", file);
 
     try {
+      const token = localStorage.getItem("studhub_token");
       const res = await fetch("http://localhost:5001/parse-syllabus", {
         method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,
       });
+
       const data = await res.json();
 
-      if (res.status === 409) {
-        setError(data.error || "This course is already added.");
-        setLoading(false);
-        return;
-      }
-
       if (!res.ok) {
-        setError(data.error || "Something went wrong.");
+        setError(getFriendlyError(res.status, data.error));
         setLoading(false);
         return;
       }
@@ -55,13 +83,19 @@ export default function UploadModal({ onClose, onCourseLoaded }: UploadModalProp
         completed: t.completed ?? false,
       }));
 
+      if (tasks.length === 0) {
+        setError("No tasks were found in this syllabus. Try a different PDF or add tasks manually.");
+        setLoading(false);
+        return;
+      }
+
       onCourseLoaded(
         data.course?.code || "UNKNOWN",
         data.course?.name || "Unknown Course",
         tasks
       );
     } catch {
-      setError("Could not connect to backend.");
+      setError("Could not connect to the server. Make sure the backend is running on port 5001.");
       setLoading(false);
     }
   };
@@ -90,6 +124,7 @@ export default function UploadModal({ onClose, onCourseLoaded }: UploadModalProp
           <>
             <h2 className={styles.title}>Analyzing syllabus...</h2>
             <p className={styles.sub}>AI is extracting assignments and deadlines</p>
+            <p className={styles.loadingHint}>This usually takes 5–15 seconds</p>
           </>
         ) : (
           <>
@@ -97,7 +132,7 @@ export default function UploadModal({ onClose, onCourseLoaded }: UploadModalProp
             <p className={styles.sub}>Drop your syllabus PDF to extract tasks automatically</p>
 
             <div
-              className={`${styles.dropZone} ${dragOver ? styles.dragOver : ""}`}
+              className={`${styles.dropZone} ${dragOver ? styles.dragOver : ""} ${error ? styles.dropZoneError : ""}`}
               onClick={() => fileInputRef.current?.click()}
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
@@ -113,7 +148,12 @@ export default function UploadModal({ onClose, onCourseLoaded }: UploadModalProp
               />
             </div>
 
-            {error && <p className={styles.error}>{error}</p>}
+            {error && (
+              <div className={styles.errorBox}>
+                <span className={styles.errorIcon}>⚠</span>
+                <p className={styles.errorText}>{error}</p>
+              </div>
+            )}
           </>
         )}
       </div>

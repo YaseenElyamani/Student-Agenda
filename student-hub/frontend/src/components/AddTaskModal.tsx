@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Task } from "../types/Task";
 import type { CourseInfo } from "../App";
 import styles from "./AddTaskModal.module.css";
+import { authFetch } from "../utils/authFetch";
 
 interface AddTaskModalProps {
   courses: CourseInfo[];
@@ -25,21 +26,14 @@ export default function AddTaskModal({ courses, defaultCourseId, onClose, onTask
   const [error, setError] = useState<string | null>(null);
 
   const handleSave = async () => {
-    if (!title.trim()) {
-      setError("Title is required.");
-      return;
-    }
-    if (!courseId) {
-      setError("Please select a course.");
-      return;
-    }
+    if (!title.trim()) { setError("Title is required."); return; }
+    if (!courseId) { setError("Please select a course."); return; }
     setSaving(true);
     setError(null);
 
     try {
-      const res = await fetch("http://localhost:5001/add-task", {
+      const res = await authFetch("http://localhost:5001/add-task", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           course_id: courseId,
           title: title.trim(),
@@ -50,12 +44,7 @@ export default function AddTaskModal({ courses, defaultCourseId, onClose, onTask
         }),
       });
 
-      if (!res.ok) {
-        setError("Failed to add task.");
-        setSaving(false);
-        return;
-      }
-
+      if (!res.ok) { setError("Failed to add task."); setSaving(false); return; }
       const newTask = await res.json();
       onTaskAdded(newTask);
       onClose();
@@ -75,11 +64,7 @@ export default function AddTaskModal({ courses, defaultCourseId, onClose, onTask
 
         <div className={styles.field}>
           <label className={styles.label}>Course</label>
-          <select
-            className={styles.input}
-            value={courseId}
-            onChange={e => setCourseId(Number(e.target.value))}
-          >
+          <select className={styles.input} value={courseId} onChange={e => setCourseId(Number(e.target.value))}>
             {courses.map(c => (
               <option key={c.id} value={c.id}>{c.code}: {c.name}</option>
             ))}
@@ -99,45 +84,24 @@ export default function AddTaskModal({ courses, defaultCourseId, onClose, onTask
         <div className={styles.row}>
           <div className={styles.field}>
             <label className={styles.label}>Type</label>
-            <select
-              className={styles.input}
-              value={type}
-              onChange={e => setType(e.target.value)}
-            >
-              {TASK_TYPES.map(t => (
-                <option key={t} value={t}>{t}</option>
-              ))}
+            <select className={styles.input} value={type} onChange={e => setType(e.target.value)}>
+              {TASK_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
           <div className={styles.field}>
             <label className={styles.label}>Weight</label>
-            <input
-              className={styles.input}
-              value={weight}
-              onChange={e => setWeight(e.target.value)}
-              placeholder="e.g. 10%"
-            />
+            <input className={styles.input} value={weight} onChange={e => setWeight(e.target.value)} placeholder="e.g. 10%" />
           </div>
         </div>
 
         <div className={styles.row}>
           <div className={styles.field}>
             <label className={styles.label}>Due Date</label>
-            <input
-              className={styles.input}
-              type="date"
-              value={dueDate}
-              onChange={e => setDueDate(e.target.value)}
-            />
+            <input className={styles.input} type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} />
           </div>
           <div className={styles.field}>
             <label className={styles.label}>Due Time</label>
-            <input
-              className={styles.input}
-              type="time"
-              value={dueTime}
-              onChange={e => setDueTime(e.target.value)}
-            />
+            <input className={styles.input} type="time" value={dueTime} onChange={e => setDueTime(e.target.value)} />
           </div>
         </div>
 

@@ -57,6 +57,16 @@ interface TaskTableProps {
 export default function TaskTable({ tasks, onToggle, onTaskUpdated, onTaskDeleted, editMode }: TaskTableProps) {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
+  const allCompleted = tasks.length > 0 && tasks.every(t => t.completed);
+
+  const handleToggleAll = () => {
+    tasks.forEach(t => {
+      if (allCompleted ? t.completed : !t.completed) {
+        onToggle(t.id);
+      }
+    });
+  };
+
   return (
     <>
       {editingTask && (
@@ -67,10 +77,18 @@ export default function TaskTable({ tasks, onToggle, onTaskUpdated, onTaskDelete
           onDelete={(id) => { onTaskDeleted(id); setEditingTask(null); }}
         />
       )}
+
+      {/* Desktop table */}
       <table className={styles.table}>
         <thead>
           <tr>
-            <th className={styles.th}>Status</th>
+            <th className={styles.th} style={{ width: "40px" }}>
+              <button
+                className={`${styles.checkbox} ${allCompleted ? styles.checked : ""}`}
+                onClick={handleToggleAll}
+                aria-label="Toggle all tasks"
+              />
+            </th>
             <th className={styles.th}>Task Name</th>
             <th className={styles.th}>Type</th>
             <th className={styles.th}>Due Date ✦</th>
@@ -135,6 +153,71 @@ export default function TaskTable({ tasks, onToggle, onTaskUpdated, onTaskDelete
           })}
         </tbody>
       </table>
+
+      {/* Mobile cards */}
+      <div className={styles.mobileCards}>
+        <div className={styles.mobileSelectAll}>
+          <button
+            className={`${styles.checkbox} ${allCompleted ? styles.checked : ""}`}
+            onClick={handleToggleAll}
+            aria-label="Toggle all tasks"
+          />
+          <span className={styles.mobileSelectLabel}>Select All</span>
+        </div>
+        {tasks.map((task) => {
+          const typeStyle = TYPE_COLORS[task.type] ?? TYPE_COLORS.Assignment;
+          const overdue = !task.completed && isOverdue(task.due_date, task.due_time);
+          const strike = task.completed || overdue;
+          return (
+            <div
+              key={task.id}
+              className={`${styles.mobileCard} ${overdue ? styles.mobileCardOverdue : ""} ${task.completed ? styles.mobileCardCompleted : ""}`}
+              style={{ borderLeftColor: overdue ? "#ef4444" : task.completed ? "#34d399" : typeStyle.color }}
+            >
+              <div className={styles.mobileCardTop}>
+                <button
+                  className={`${styles.checkbox} ${task.completed ? styles.checked : ""}`}
+                  onClick={() => onToggle(task.id)}
+                  aria-label="Toggle task"
+                />
+                <div className={styles.mobileCardInfo}>
+                  <p className={`${styles.mobileCardTitle} ${strike ? styles.strikethrough : ""}`}>
+                    {task.title}
+                  </p>
+                  <div className={styles.mobileCardMeta}>
+                    <span
+                      className={styles.badge}
+                      style={{ background: typeStyle.bg, color: typeStyle.color, borderColor: typeStyle.color }}
+                    >
+                      {task.type}
+                    </span>
+                    {overdue && !task.completed && (
+                      <span className={styles.overdueTag}>Overdue</span>
+                    )}
+                    {task.completed && (
+                      <span className={styles.completedTag}>Complete</span>
+                    )}
+                  </div>
+                </div>
+                {editMode && (
+                  <button
+                    className={styles.editBtn}
+                    onClick={() => setEditingTask(task)}
+                  >
+                    ✎
+                  </button>
+                )}
+              </div>
+              <div className={styles.mobileCardBottom}>
+                <span className={`${styles.dueDate} ${overdue && !task.completed ? styles.overdueDate : ""} ${task.completed ? styles.completedDate : ""}`}>
+                  ⏱ {formatDueDate(task.due_date, task.due_time)}
+                </span>
+                <span className={styles.weight}>{task.weight}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </>
   );
 }

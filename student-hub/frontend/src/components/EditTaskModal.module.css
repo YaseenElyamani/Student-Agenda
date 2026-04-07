@@ -47,6 +47,49 @@
   color: #fff;
 }
 
+.deleteBtn {
+  background: transparent;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.deleteBtn:hover {
+  background: #2a1a1a;
+}
+
+.deleteConfirmBtn {
+  background: #ef4444;
+  border: none;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.deleteConfirmBtn:hover {
+  background: #dc2626;
+}
+
+.deleteConfirmBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.confirmText {
+  color: #9ca3af;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -136,78 +179,4 @@
 .saveBtn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-.deleteBtn {
-  background: transparent;
-  border: 1px solid #ef4444;
-  color: #ef4444;
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.deleteBtn:hover {
-  background: #2a1a1a;
-}
-
-.deleteConfirmBtn {
-  background: #ef4444;
-  border: none;
-  color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.deleteConfirmBtn:hover {
-  background: #dc2626;
-}
-
-.deleteConfirmBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.confirmText {
-  color: #9ca3af;
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0;
-}
-
-.deleteBtn {
-  background: transparent;
-  border: 1px solid #ef4444;
-  color: #ef4444;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.deleteBtn:hover {
-  background: #2a1a1a;
-}
-
-.deleteConfirmBtn {
-  background: #ef4444;
-  border: none;
-  color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.deleteConfirmBtn:hover {
-  background: #dc2626;
 }

@@ -1,0 +1,280 @@
+.layout {
+  min-height: 100vh;
+  background: #0d0f14;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', -apple-system, sans-serif;
+  padding: 24px;
+}
+
+.card {
+  background: #15171f;
+  border: 1px solid #1e2028;
+  border-radius: 20px;
+  padding: 48px 44px;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.logoIcon {
+  color: #7c6fcd;
+  font-size: 20px;
+}
+
+.logoText {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.heading {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.tagline {
+  color: #4a4f62;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.googleBtn {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  color: #3c3c3c;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 13px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.15s;
+  font-family: 'Inter', sans-serif;
+}
+
+.googleBtn:hover {
+  background: #15171f;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  color: #4a4f62;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.input {
+  background: #1a1d27;
+  border: 1px solid #2a2d3a;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #7c6fcd;
+}
+
+.input::placeholder {
+  color: #4a4f62;
+}
+
+.forgotLink {
+  text-align: right;
+  margin: -6px 0 0;
+}
+
+.error {
+  color: #ef4444;
+  font-size: 13px;
+  margin: -6px 0 0;
+  background: #2a1a1a;
+  border: 1px solid #ef444433;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.submitBtn {
+  background: #7c6fcd;
+  border: none;
+  color: #ffffff;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+}
+
+.submitBtn:hover {
+  background: #6d63cc;
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: #1e2028;
+}
+
+.dividerText {
+  color: #4a4f62;
+  font-size: 12px;
+}
+
+.guestBtn {
+  background: transparent;
+  border: 1px solid #2a2d3a;
+  color: #9ca3af;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.guestBtn:hover {
+  border-color: #4a4f62;
+  color: #ffffff;
+}
+
+.guestNote {
+  font-size: 11px;
+  color: #4a4f62;
+}
+
+.switchText {
+  color: #4a4f62;
+  font-size: 13px;
+  text-align: center;
+  margin: -6px 0 0;
+}
+
+.switchBtn {
+  background: transparent;
+  border: none;
+  color: #7c6fcd;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  padding: 0;
+}
+
+.switchBtn:hover {
+  text-decoration: underline;
+}
+
+.loadingScreen {
+  min-height: 100vh;
+  background: #0d0f14;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-family: 'Inter', sans-serif;
+}
+
+.loadingIcon {
+  color: #7c6fcd;
+  font-size: 32px;
+  animation: spin 2s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loadingText {
+  color: #4a4f62;
+  font-size: 14px;
+  margin: 0;
+}
+
+.expiredBanner {
+  background: #2a1a00;
+  border: 1px solid #f59e0b44;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #f59e0b;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.expiredClose {
+  background: transparent;
+  border: none;
+  color: #f59e0b;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  flex-shrink: 0;
+}
