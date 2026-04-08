@@ -31,7 +31,10 @@ CORS(app,
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"]
 )
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tasks.db"
+database_url = os.getenv("DATABASE_URL", "sqlite:///tasks.db")
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "supersecretkey123")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=30)
