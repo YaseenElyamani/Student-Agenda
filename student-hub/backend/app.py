@@ -20,7 +20,7 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:5173",
-                   "studhub-frontend-yaseenelyamanis-projects.vercel.app"
+                   "https://student-agenda-yaseenelyamanis-projects.vercel.app",
                    "https://studhub.work"], supports_credentials=True)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tasks.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
