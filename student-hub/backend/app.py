@@ -24,6 +24,7 @@ CORS(app,
     origins=[
         "http://localhost:5173",
         "https://studhub.work",
+        "https://www.studhub.work",
         "https://student-agenda-yaseenelyamanis-projects.vercel.app"
     ],
     supports_credentials=True,
