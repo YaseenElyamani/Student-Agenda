@@ -57,7 +57,7 @@ export default function UploadModal({ onClose, onCourseLoaded }: UploadModalProp
 
     try {
       const token = localStorage.getItem("studhub_token");
-      const res = await fetch("${import.meta.env.VITE_API_URL}/parse-syllabus", {
+      const res = await fetch("https://student-agenda-production.up.railway.app/parse-syllabus", {
         method: "POST",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,

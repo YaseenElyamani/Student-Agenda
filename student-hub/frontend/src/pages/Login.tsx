@@ -24,7 +24,7 @@ export default function Login({ onLogin, onGuest, sessionExpired, onClearExpired
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch("${import.meta.env.VITE_API_URL}/auth/google", {
+        const res = await fetch("https://student-agenda-production.up.railway.app/auth/google", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ access_token: tokenResponse.access_token }),
@@ -64,7 +64,7 @@ export default function Login({ onLogin, onGuest, sessionExpired, onClearExpired
     }
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/${mode === "login" ? "login" : "signup"}`, {
+      const res = await fetch(`https://student-agenda-production.up.railway.app/auth/${mode === "login" ? "login" : "signup"}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase(), password }),

@@ -44,7 +44,7 @@ export default function Home({ courses, activeCourseId, onSelectCourse, onCourse
     if (token) headers["Authorization"] = `Bearer ${token}`;
 
     try {
-      const res = await fetch("${import.meta.env.VITE_API_URL}/parse-syllabus", {
+      const res = await fetch("https://student-agenda-production.up.railway.app/parse-syllabus", {
         method: "POST",
         headers,
         body: formData,
