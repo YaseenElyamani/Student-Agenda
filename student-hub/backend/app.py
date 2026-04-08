@@ -299,10 +299,11 @@ def delete_course(course_id):
 
 # ─── Parse Syllabus ───────────────────────────────────────
 @app.route("/parse-syllabus", methods=["POST"])
-@jwt_required()
+@jwt_required(optional=True)
 @limiter.limit("5 per day")
 def parse_syllabus():
-    user_id = int(get_jwt_identity())
+    user_id = get_jwt_identity()
+    user_id = int(user_id) if user_id else None
 
     if "file" not in request.files:
         return jsonify({"error": "No file uploaded"}), 400
@@ -373,33 +374,53 @@ IMPORTANT RULES:
         course_code = extracted_data.get("course_code", "UNKNOWN")
         course_name = extracted_data.get("course_name", "")
 
-        existing = Course.query.filter_by(code=course_code, user_id=user_id).first()
+        existing = Course.query.filter_by(code=course_code, user_id=user_id).first() if user_id else None
         if existing:
             return jsonify({
                 "error": f"Course {course_code} already exists.",
                 "duplicate": True
             }), 409
 
-        course = Course(user_id=user_id, code=course_code, name=course_name)
-        db.session.add(course)
-        db.session.flush()
+        if user_id:
+            course = Course(user_id=user_id, code=course_code, name=course_name)
+            db.session.add(course)
+            db.session.flush()
 
-        for t in extracted_data.get("tasks", []):
-            task = Task(
-                course_id=course.id,
-                title=t.get("title", "Untitled"),
-                type=t.get("type", "Assignment"),
-                due_date=t.get("due_date"),
-                due_time=t.get("due_time"),
-                weight=t.get("weight")
-            )
-            db.session.add(task)
-        db.session.commit()
+            for t in extracted_data.get("tasks", []):
+                task = Task(
+                    course_id=course.id,
+                    title=t.get("title", "Untitled"),
+                    type=t.get("type", "Assignment"),
+                    due_date=t.get("due_date"),
+                    due_time=t.get("due_time"),
+                    weight=t.get("weight")
+                )
+                db.session.add(task)
+            db.session.commit()
 
-        return jsonify({
-            "course": course.to_dict(),
-            "tasks": [t.to_dict() for t in course.tasks]
-        })
+            return jsonify({
+                "course": course.to_dict(),
+                "tasks": [t.to_dict() for t in course.tasks]
+            })
+        else:
+            # Guest mode — return parsed data without saving to DB
+            tasks = []
+            for i, t in enumerate(extracted_data.get("tasks", [])):
+                tasks.append({
+                    "id": i + 1,
+                    "course_id": 1,
+                    "course_code": course_code,
+                    "title": t.get("title", "Untitled"),
+                    "type": t.get("type", "Assignment"),
+                    "due_date": t.get("due_date"),
+                    "due_time": t.get("due_time"),
+                    "weight": t.get("weight"),
+                    "completed": False
+                })
+            return jsonify({
+                "course": {"id": 1, "code": course_code, "name": course_name},
+                "tasks": tasks
+            })
 
     except Exception as e:
         db.session.rollback()
