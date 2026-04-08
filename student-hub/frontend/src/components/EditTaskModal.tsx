@@ -29,7 +29,7 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete }: EditT
     setError(null);
 
     try {
-      const res = await authFetch(`http://localhost:5001/tasks/${task.id}`, {
+      const res = await authFetch(`${import.meta.env.VITE_API_URL}/tasks/${task.id}`, {
         method: "PUT",
         body: JSON.stringify({
           title: title.trim(),
@@ -53,7 +53,7 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete }: EditT
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      const res = await authFetch(`http://localhost:5001/tasks/${task.id}`, {
+      const res = await authFetch(`${import.meta.env.VITE_API_URL}/tasks/${task.id}`, {
         method: "DELETE",
       });
       if (!res.ok) { setError("Failed to delete task."); setDeleting(false); return; }

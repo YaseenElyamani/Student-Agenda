@@ -48,7 +48,7 @@ function App() {
 
     let cancelled = false;
 
-    fetch("http://localhost:5001/courses/full", {
+    fetch("${import.meta.env.VITE_API_URL}/courses/full", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.status === 401 ? null : res.json())
@@ -133,7 +133,7 @@ function App() {
   };
 
   const handleRemoveCourse = (id: number) => {
-    fetch(`http://localhost:5001/courses/${id}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/courses/${id}`, {
       method: "DELETE",
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
@@ -148,7 +148,7 @@ function App() {
   };
 
   const handleToggleTask = (id: number) => {
-    fetch(`http://localhost:5001/tasks/${id}/complete`, {
+    fetch(`${import.meta.env.VITE_API_URL}/tasks/${id}/complete`, {
       method: "POST",
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     }).catch(err => console.error("Failed to toggle task:", err));

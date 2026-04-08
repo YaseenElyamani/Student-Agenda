@@ -19,7 +19,8 @@ from flask_limiter.util import get_remote_address
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173"], supports_credentials=True)
+CORS(app, origins=["http://localhost:5173",
+                   "https://studhub.work"], supports_credentials=True)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tasks.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "supersecretkey123")

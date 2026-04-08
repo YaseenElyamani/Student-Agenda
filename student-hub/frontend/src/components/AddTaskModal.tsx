@@ -32,7 +32,7 @@ export default function AddTaskModal({ courses, defaultCourseId, onClose, onTask
     setError(null);
 
     try {
-      const res = await authFetch("http://localhost:5001/add-task", {
+      const res = await authFetch("${import.meta.env.VITE_API_URL}/add-task", {
         method: "POST",
         body: JSON.stringify({
           course_id: courseId,
