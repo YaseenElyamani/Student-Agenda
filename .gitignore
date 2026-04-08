@@ -4,3 +4,7 @@ student-hub/backend/instance/
 
 __pycache__/
 *.pyc
+
+.env/
+
+.env.local
