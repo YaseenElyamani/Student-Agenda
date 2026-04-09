@@ -40,6 +40,7 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
       <button
         className={styles.mobileToggle}
         onClick={() => setMobileOpen(true)}
+        style={{ display: mobileOpen ? "none" : "flex" }}
       >
         ☰
       </button>
@@ -80,7 +81,14 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
           {!collapsed && <span className={styles.logoText}>StudHub</span>}
           <span
             className={styles.collapseBtn}
-            onClick={(e) => { e.stopPropagation(); setCollapsed(!collapsed); setMobileOpen(false); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (window.innerWidth <= 768) {
+                setMobileOpen(false);
+              } else {
+                setCollapsed(!collapsed);
+              }
+            }}
           >
             {collapsed ? "›" : "‹"}
           </span>
@@ -128,7 +136,7 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
                 )}
               </div>
             ))}
-            <button className={styles.addCourse} onClick={onAddCourse}>
+            <button className={styles.addCourse} onClick={() => { onAddCourse(); setMobileOpen(false); }}>
               <span>+</span> Add Course
             </button>
           </div>

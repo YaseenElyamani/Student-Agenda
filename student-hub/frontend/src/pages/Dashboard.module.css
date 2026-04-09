@@ -305,3 +305,149 @@
   border-color: #60a5fa;
   background: #0d1525;
 }
+@media (max-width: 768px) {
+  .table {
+    display: none;
+  }
+
+  .mobileCards {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 0;
+  }
+
+  .mobileSelectAll {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 4px 8px;
+    border-bottom: 1px solid #1e2028;
+    margin-bottom: 4px;
+  }
+
+  .mobileSelectLabel {
+    color: #4a4f62;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .mobileCard {
+    background: #15171f;
+    border-radius: 10px;
+    padding: 10px 14px;
+    border: 1px solid #1e2028;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: background 0.1s;
+  }
+
+  .mobileCardOverdue {
+    border-color: #ef444433;
+    opacity: 0.85;
+  }
+
+  .mobileCardCompleted {
+    opacity: 0.5;
+  }
+
+  .courseCard {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+  }
+
+  .mobileCardTop {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mobileCardInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .mobileCardTitle {
+    color: #e5e7eb;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .mobileCardMeta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
+  .mobileCardBottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2px;
+  }
+
+  .mobileCardBottom .dueDate {
+    font-size: 11px;
+    color: #4a4f62;
+  }
+
+  .mobileCardBottom .weight {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .courseCard {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+  }
+
+  .courseHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 0 0 16px 0;
+    background: transparent;
+    border: none;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+  }
+
+  .courseHeader > div:last-child {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .addTaskBtn {
+    flex: 1;
+  }
+
+  .editModeBtn,
+  .editModeActiveBtn {
+    flex: 1;
+  }
+
+
+  .exportBtn {
+    width: 100%;
+    padding: 12px;
+    font-size: 13px;
+    justify-content: center;
+    order: 99;
+  }
+  .showAllBtn {
+    width: 100%;
+    order:100;
+  }
+}

@@ -265,3 +265,76 @@
   padding: 20px 0;
 }
 
+@media (max-width: 768px) {
+  .content {
+    padding: 60px 16px 24px;
+  }
+
+  .heading {
+    font-size: 22px;
+  }
+
+  .filterRow {
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .filterLabel {
+    width: 100%;
+  }
+
+  .calendarCard {
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .calendarGrid {
+    gap: 1px;
+  }
+
+  .dayCell {
+    min-height: 60px;
+    padding: 4px;
+  }
+
+  .emptyCell {
+    min-height: 60px;
+  }
+
+  .chipTitle {
+    font-size: 9px;
+  }
+
+  .upcomingCard {
+    padding: 16px;
+  }
+
+  .upcomingItem {
+    padding: 10px 0;
+    gap: 10px;
+  }
+
+  .upcomingName {
+    font-size: 13px;
+  }
+  .dayCell {
+    min-height: 60px;
+    padding: 4px;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .taskChip {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .chipTitle {
+    font-size: 9px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

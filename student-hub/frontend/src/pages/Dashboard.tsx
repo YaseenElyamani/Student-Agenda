@@ -314,6 +314,17 @@ export default function Dashboard({
                 </p>
             }
           </div>
+
+                  {/* Mobile upcoming deadline */}
+        {upcomingTasks.length > 0 && (
+          <div className={styles.mobileDeadlineCard}>
+            <p className={styles.mobileDeadlineLabel}>Upcoming Deadline</p>
+            <p className={styles.mobileDeadlineDate}>
+              {SHORT_MONTH_NAMES[parseLocalDate(upcomingTasks[0].due_date).getMonth()]} {parseLocalDate(upcomingTasks[0].due_date).getDate()}
+            </p>
+            <p className={styles.mobileDeadlineTask}>{upcomingTasks[0].title}</p>
+          </div>
+        )}
         </div>
       </main>
     </div>

@@ -172,7 +172,6 @@ export default function TaskTable({ tasks, onToggle, onTaskUpdated, onTaskDelete
             <div
               key={task.id}
               className={`${styles.mobileCard} ${overdue ? styles.mobileCardOverdue : ""} ${task.completed ? styles.mobileCardCompleted : ""}`}
-              style={{ borderLeftColor: overdue ? "#ef4444" : task.completed ? "#34d399" : typeStyle.color }}
             >
               <div className={styles.mobileCardTop}>
                 <button
