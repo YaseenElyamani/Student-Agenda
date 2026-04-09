@@ -38,9 +38,8 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
   return (
     <>
       <button
-        className={styles.mobileToggle}
+        className={`${styles.mobileToggle} ${mobileOpen ? styles.mobileToggleHidden : ""}`}
         onClick={() => setMobileOpen(true)}
-        style={{ display: mobileOpen ? "none" : "flex" }}
       >
         ☰
       </button>
