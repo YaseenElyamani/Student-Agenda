@@ -172,12 +172,23 @@ export default function TaskTable({ tasks, onToggle, onTaskUpdated, onTaskDelete
             <div
               key={task.id}
               className={`${styles.mobileCard} ${overdue ? styles.mobileCardOverdue : ""} ${task.completed ? styles.mobileCardCompleted : ""}`}
+              onClick={(e) => {
+                if ((e.target as HTMLElement).closest(`.${styles.editBtn}`)) return;
+                onToggle(task.id);
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onToggle(task.id);
+                }
+              }}
             >
               <div className={styles.mobileCardTop}>
-                <button
+                <span
                   className={`${styles.checkbox} ${task.completed ? styles.checked : ""}`}
-                  onClick={() => onToggle(task.id)}
-                  aria-label="Toggle task"
+                  aria-hidden="true"
                 />
                 <div className={styles.mobileCardInfo}>
                   <p className={`${styles.mobileCardTitle} ${strike ? styles.strikethrough : ""}`}>
@@ -201,7 +212,7 @@ export default function TaskTable({ tasks, onToggle, onTaskUpdated, onTaskDelete
                 {editMode && (
                   <button
                     className={styles.editBtn}
-                    onClick={() => setEditingTask(task)}
+                    onClick={(e) => { e.stopPropagation(); setEditingTask(task); }}
                   >
                     ✎
                   </button>

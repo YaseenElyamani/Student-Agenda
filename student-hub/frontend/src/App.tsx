@@ -212,10 +212,10 @@ function App() {
         alignItems: "center",
         justifyContent: "center",
         height: "100vh",
-        background: "#0d0f14",
-        color: "#7c6fcd",
-        fontFamily: "Inter, sans-serif",
-        fontSize: "16px",
+        background: "#060812",
+        color: "#8b5cf6",
+        fontFamily: "'DM Sans', Inter, sans-serif",
+        fontSize: "15px",
         gap: "10px"
       }}>
         <span style={{ animation: "spin 1s linear infinite", display: "inline-block" }}>⟳</span>

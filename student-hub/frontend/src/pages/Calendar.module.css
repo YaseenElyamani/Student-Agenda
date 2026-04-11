@@ -1,8 +1,8 @@
 .layout {
   display: flex;
   min-height: 100vh;
-  background: #0d0f14;
-  font-family: 'Inter', -apple-system, sans-serif;
+  background: #060812;
+  font-family: 'DM Sans', 'Inter', -apple-system, sans-serif;
 }
 
 .main {
@@ -13,7 +13,7 @@
 }
 
 .content {
-  padding: 36px 40px;
+  padding: 40px 44px;
   max-width: 1100px;
   width: 100%;
 }
@@ -23,12 +23,13 @@
   font-size: 28px;
   font-weight: 700;
   margin: 0 0 6px;
+  letter-spacing: -0.5px;
 }
 
 .subheading {
-  color: #4a4f62;
+  color: #6b7194;
   font-size: 14px;
-  margin: 0 0 24px;
+  margin: 0 0 28px;
 }
 
 /* Filter */
@@ -41,7 +42,7 @@
 }
 
 .filterLabel {
-  color: #4a4f62;
+  color: #6b7194;
   font-size: 13px;
 }
 
@@ -51,23 +52,24 @@
   gap: 6px;
   padding: 6px 14px;
   border-radius: 99px;
-  border: 1px solid #2a2d3a;
+  border: 1px solid rgba(255, 255, 255, 0.07);
   background: transparent;
-  color: #9ca3af;
+  color: #8a8faa;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
 }
 
 .filterBtn:hover {
-  border-color: #7c6fcd;
-  color: #fff;
+  border-color: rgba(139, 92, 246, 0.4);
+  color: #e2e4ed;
 }
 
 .filterActive {
-  background: #7c6fcd;
-  border-color: #7c6fcd;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  border-color: transparent;
   color: #fff;
 }
 
@@ -79,10 +81,11 @@
 
 /* Calendar Card */
 .calendarCard {
-  background: #15171f;
-  border: 1px solid #1e2028;
-  border-radius: 14px;
-  padding: 24px;
+  background: rgba(17, 19, 28, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 26px;
   margin-bottom: 24px;
 }
 
@@ -90,7 +93,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .monthTitle {
@@ -98,6 +101,7 @@
   font-size: 20px;
   font-weight: 700;
   margin: 0;
+  letter-spacing: -0.3px;
 }
 
 .navBtns {
@@ -106,87 +110,100 @@
 }
 
 .navBtn {
-  background: #1a1d27;
-  border: 1px solid #2a2d3a;
-  color: #9ca3af;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: #8a8faa;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
   font-size: 18px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s;
+  transition: all 0.15s ease;
 }
 
 .navBtn:hover {
-  border-color: #7c6fcd;
+  border-color: rgba(139, 92, 246, 0.4);
   color: #fff;
+  background: rgba(139, 92, 246, 0.06);
 }
 
 .calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 1px;
-  background: #1e2028;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
   overflow: hidden;
 }
 
 .weekdayHeader {
-  background: #15171f;
-  color: #4a4f62;
+  background: rgba(10, 12, 20, 0.8);
+  color: #6b7194;
   font-size: 12px;
   font-weight: 600;
   text-align: center;
-  padding: 10px 0;
+  padding: 11px 0;
+  letter-spacing: 0.3px;
 }
 
 .dayCell {
-  background: #15171f;
+  background: rgba(10, 12, 20, 0.6);
   min-height: 90px;
   padding: 8px;
   display: flex;
   flex-direction: column;
   gap: 3px;
+  transition: background 0.15s ease;
+}
+
+.dayCell:hover {
+  background: rgba(139, 92, 246, 0.02);
 }
 
 .emptyCell {
-  background: #15171f;
+  background: rgba(10, 12, 20, 0.4);
   min-height: 90px;
 }
 
 .todayCell {
-  background: #1a1d27;
+  background: rgba(139, 92, 246, 0.04);
 }
 
 .dayNum {
-  color: #9ca3af;
+  color: #8a8faa;
   font-size: 13px;
   font-weight: 500;
   margin-bottom: 4px;
 }
 
 .todayNum {
-  background: #7c6fcd;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
   color: #fff;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
   font-weight: 700;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
 }
 
 .taskChip {
   padding: 3px 6px;
-  border-radius: 4px;
+  border-radius: 5px;
   font-size: 11px;
   overflow: hidden;
   cursor: default;
+  transition: transform 0.1s ease;
+}
+
+.taskChip:hover {
+  transform: scale(1.02);
 }
 
 .chipTitle {
@@ -198,17 +215,18 @@
 
 /* Upcoming */
 .upcomingCard {
-  background: #15171f;
-  border: 1px solid #1e2028;
-  border-radius: 14px;
-  padding: 24px;
+  background: rgba(17, 19, 28, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 26px;
 }
 
 .upcomingTitle {
   color: #ffffff;
   font-size: 16px;
   font-weight: 600;
-  margin: 0 0 16px;
+  margin: 0 0 18px;
 }
 
 .upcomingItem {
@@ -216,7 +234,8 @@
   align-items: center;
   gap: 14px;
   padding: 14px 0;
-  border-bottom: 1px solid #1a1d27;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.15s ease;
 }
 
 .upcomingItem:last-child {
@@ -235,14 +254,14 @@
 }
 
 .upcomingName {
-  color: #e5e7eb;
+  color: #e2e4ed;
   font-size: 14px;
   font-weight: 500;
   margin: 0 0 4px;
 }
 
 .upcomingMeta {
-  color: #4a4f62;
+  color: #6b7194;
   font-size: 12px;
   margin: 0;
 }
@@ -254,13 +273,13 @@
 }
 
 .upcomingWeight {
-  color: #9ca3af;
+  color: #8a8faa;
   font-size: 13px;
   font-weight: 600;
 }
 
 .empty {
-  color: #4a4f62;
+  color: #6b7194;
   font-size: 14px;
   padding: 20px 0;
 }
@@ -296,33 +315,12 @@
   .dayCell {
     min-height: 60px;
     padding: 4px;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .emptyCell {
     min-height: 60px;
-  }
-
-  .chipTitle {
-    font-size: 9px;
-  }
-
-  .upcomingCard {
-    padding: 16px;
-  }
-
-  .upcomingItem {
-    padding: 10px 0;
-    gap: 10px;
-  }
-
-  .upcomingName {
-    font-size: 13px;
-  }
-  .dayCell {
-    min-height: 60px;
-    padding: 4px;
-    max-width: 100%;
-    overflow: hidden;
   }
 
   .taskChip {
@@ -336,5 +334,18 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .upcomingCard {
+    padding: 16px;
+  }
+
+  .upcomingItem {
+    padding: 10px 0;
+    gap: 10px;
+  }
+
+  .upcomingName {
+    font-size: 13px;
   }
 }

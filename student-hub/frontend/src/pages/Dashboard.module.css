@@ -1,21 +1,23 @@
 .layout {
   display: flex;
-  min-height: 100vh;
-  background: #0d0f14;
-  font-family: 'Inter', -apple-system, sans-serif;
+  height: 100vh;
+  height: 100dvh;
+  background: #060812;
+  font-family: 'DM Sans', 'Inter', -apple-system, sans-serif;
+  overflow: hidden;
 }
 
 .main {
   flex: 1;
   overflow-y: auto;
-  display: flex;
-  justify-content: center;
+  -webkit-overflow-scrolling: touch;
 }
 
 .content {
-  padding: 36px 40px;
+  padding: 40px 44px;
   max-width: 1100px;
   width: 100%;
+  margin: 0 auto;
 }
 
 .heading {
@@ -23,18 +25,20 @@
   font-size: 28px;
   font-weight: 700;
   margin: 0 0 6px;
+  letter-spacing: -0.5px;
 }
 
 .subheading {
-  color: #4a4f62;
+  color: #6b7194;
   font-size: 14px;
-  margin: 0 0 28px;
+  margin: 0 0 32px;
 }
 
 .courseCard {
-  background: #15171f;
-  border: 1px solid #1e2028;
-  border-radius: 14px;
+  background: rgba(17, 19, 28, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
   overflow: hidden;
 }
 
@@ -42,8 +46,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
-  border-bottom: 1px solid #1e2028;
+  padding: 22px 26px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .courseInfo {
@@ -54,13 +65,14 @@
 
 .courseIcon {
   font-size: 22px;
-  background: #1a1d27;
-  width: 44px;
-  height: 44px;
+  background: rgba(139, 92, 246, 0.08);
+  width: 46px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(139, 92, 246, 0.1);
 }
 
 .courseName {
@@ -71,7 +83,7 @@
 }
 
 .courseMeta {
-  color: #4a4f62;
+  color: #6b7194;
   font-size: 12px;
   margin: 0;
 }
@@ -83,22 +95,18 @@
 }
 
 .empty {
-  color: #4a4f62;
+  color: #6b7194;
   font-size: 14px;
-  padding: 32px 24px;
+  padding: 36px 26px;
   text-align: center;
 }
 
-.upcomingTime {
-  color: #7c6fcd;
-  font-weight: 600;
-}
-
 .upcomingCard {
-  background: #15171f;
-  border: 1px solid #1e2028;
-  border-radius: 14px;
-  padding: 20px 24px;
+  background: rgba(17, 19, 28, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 22px 26px;
   margin-bottom: 24px;
 }
 
@@ -106,7 +114,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .sectionTitle {
@@ -117,11 +125,12 @@
 }
 
 .upcomingCount {
-  color: #4a4f62;
+  color: #6b7194;
   font-size: 12px;
-  background: #1a1d27;
-  padding: 3px 10px;
+  background: rgba(139, 92, 246, 0.08);
+  padding: 4px 12px;
   border-radius: 99px;
+  border: 1px solid rgba(139, 92, 246, 0.1);
 }
 
 .upcomingList {
@@ -133,9 +142,10 @@
 .upcomingItem {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid #1a1d27;
+  gap: 14px;
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.15s ease;
 }
 
 .upcomingItem:last-child {
@@ -154,20 +164,20 @@
 }
 
 .upcomingName {
-  color: #e5e7eb;
+  color: #e2e4ed;
   font-size: 14px;
   font-weight: 500;
   margin: 0 0 3px;
 }
 
 .upcomingMeta {
-  color: #4a4f62;
+  color: #6b7194;
   font-size: 12px;
   margin: 0;
 }
 
 .upcomingTime {
-  color: #7c6fcd;
+  color: #8b5cf6;
   font-weight: 600;
 }
 
@@ -189,8 +199,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
-  border-bottom: 1px solid #1e2028;
+  padding: 14px 26px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   flex-wrap: wrap;
   justify-content: flex-end;
 }
@@ -199,25 +209,27 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 99px;
-  border: 1px solid #2a2d3a;
+  border: 1px solid rgba(255, 255, 255, 0.07);
   background: transparent;
-  color: #9ca3af;
+  color: #8a8faa;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
 }
 
 .filterBtn:hover {
-  border-color: #7c6fcd;
-  color: #fff;
+  border-color: rgba(139, 92, 246, 0.4);
+  color: #e2e4ed;
+  background: rgba(139, 92, 246, 0.04);
 }
 
 .filterActive {
-  background: #7c6fcd;
-  border-color: #7c6fcd;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  border-color: transparent;
   color: #fff;
 }
 
@@ -227,227 +239,335 @@
   border-radius: 50%;
 }
 
+.filterSep {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.toggleBtn {
+  padding: 6px 14px;
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: transparent;
+  color: #6b7194;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.toggleBtn:hover {
+  border-color: rgba(139, 92, 246, 0.3);
+  color: #9ca3bf;
+}
+
+.toggleActive {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.25);
+  color: #a78bfa;
+}
+
 .showAllBtn {
   background: transparent;
-  border: 1px solid #2a2d3a;
-  color: #7c6fcd;
-  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: #8b5cf6;
+  padding: 6px 16px;
   border-radius: 8px;
   font-size: 12px;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
 }
 
 .showAllBtn:hover {
-  border-color: #7c6fcd;
-  background: #1e1a3a;
+  border-color: rgba(139, 92, 246, 0.4);
+  background: rgba(139, 92, 246, 0.06);
 }
 
 .editModeBtn {
   background: transparent;
-  border: 1px solid #2a2d3a;
-  color: #7c6fcd;
-  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: #8b5cf6;
+  padding: 6px 16px;
   border-radius: 8px;
   font-size: 12px;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
 }
 
 .editModeBtn:hover {
-  border-color: #7c6fcd;
-  background: #1e1a3a;
+  border-color: rgba(139, 92, 246, 0.4);
+  background: rgba(139, 92, 246, 0.06);
 }
 
 .editModeActiveBtn {
-  background: #7c6fcd;
-  border: 1px solid #7c6fcd;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  border: 1px solid transparent;
   color: #fff;
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: 8px;
   font-size: 12px;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
 }
 
 .editModeActiveBtn:hover {
-  background: #6d63cc;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.25);
 }
 
 .addTaskBtn {
   background: transparent;
-  border: 1px solid #2a2d3a;
+  border: 1px solid rgba(52, 211, 153, 0.2);
   color: #34d399;
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: 8px;
   font-size: 12px;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
 }
 
 .addTaskBtn:hover {
-  border-color: #34d399;
-  background: #0d1f0d;
+  border-color: rgba(52, 211, 153, 0.4);
+  background: rgba(52, 211, 153, 0.06);
 }
 
 .exportBtn {
   background: transparent;
-  border: 1px solid #2a2d3a;
+  border: 1px solid rgba(96, 165, 250, 0.2);
   color: #60a5fa;
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: 8px;
   font-size: 12px;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
 }
 
 .exportBtn:hover {
-  border-color: #60a5fa;
-  background: #0d1525;
+  border-color: rgba(96, 165, 250, 0.4);
+  background: rgba(96, 165, 250, 0.06);
 }
+
+/* Mobile deadline card */
+.mobileDeadlineCard {
+  display: none;
+}
+
 @media (max-width: 768px) {
-  .table {
-    display: none;
-  }
-
-  .mobileCards {
-    display: flex;
+  .layout {
     flex-direction: column;
-    gap: 6px;
-    padding: 8px 0;
   }
 
-  .mobileSelectAll {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0 4px 8px;
-    border-bottom: 1px solid #1e2028;
+  .main {
+    width: 100%;
+  }
+
+  .content {
+    padding: 56px 14px 24px;
+    overflow-x: hidden;
+  }
+
+  .heading {
+    font-size: 22px;
     margin-bottom: 4px;
   }
 
-  .mobileSelectLabel {
-    color: #4a4f62;
-    font-size: 12px;
-    font-weight: 500;
-  }
-
-  .mobileCard {
-    background: #15171f;
-    border-radius: 10px;
-    padding: 10px 14px;
-    border: 1px solid #1e2028;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    transition: background 0.1s;
-  }
-
-  .mobileCardOverdue {
-    border-color: #ef444433;
-    opacity: 0.85;
-  }
-
-  .mobileCardCompleted {
-    opacity: 0.5;
-  }
-
-  .courseCard {
-    background: transparent;
-    border: none;
-    border-radius: 0;
-  }
-
-  .mobileCardTop {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .mobileCardInfo {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .mobileCardTitle {
-    color: #e5e7eb;
+  .subheading {
     font-size: 13px;
-    font-weight: 500;
-    margin: 0;
-    line-height: 1.3;
+    margin-bottom: 20px;
   }
 
-  .mobileCardMeta {
-    display: flex;
-    align-items: center;
-    gap: 5px;
+  /* Upcoming card - compact for mobile */
+  .upcomingCard {
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 14px;
+  }
+
+  .upcomingHeader {
+    margin-bottom: 12px;
+  }
+
+  .sectionTitle {
+    font-size: 14px;
+  }
+
+  .upcomingCount {
+    font-size: 11px;
+    padding: 3px 10px;
+  }
+
+  .upcomingItem {
+    padding: 10px 0;
+    gap: 10px;
     flex-wrap: wrap;
   }
 
-  .mobileCardBottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 2px;
+  .upcomingBar {
+    height: 28px;
   }
 
-  .mobileCardBottom .dueDate {
+  .upcomingName {
+    font-size: 13px;
+  }
+
+  .upcomingMeta {
     font-size: 11px;
-    color: #4a4f62;
   }
 
-  .mobileCardBottom .weight {
-    font-size: 15px;
-    font-weight: 700;
-    color: #ffffff;
+  .daysLeft {
+    font-size: 11px;
+    min-width: 44px;
   }
 
+  .typeTag {
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+
+  /* Course card - clean mobile layout */
   .courseCard {
     background: transparent;
     border: none;
     border-radius: 0;
+    backdrop-filter: none;
+    overflow: visible;
   }
 
   .courseHeader {
     flex-direction: column;
     align-items: stretch;
-    gap: 8px;
+    gap: 14px;
     padding: 0 0 16px 0;
     background: transparent;
     border: none;
-    justify-content: center;
-    text-align: center;
-    align-items: center;
   }
 
-  .courseHeader > div:last-child {
-    display: flex;
-    flex-wrap: wrap;
+  .courseInfo {
+    gap: 12px;
+  }
+
+  .courseIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    border-radius: 10px;
+  }
+
+  .courseName {
+    font-size: 15px;
+  }
+
+  .courseMeta {
+    font-size: 11px;
+  }
+
+  /* Action buttons - grid layout on mobile */
+  .actionRow {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
     width: 100%;
   }
 
-  .addTaskBtn {
-    flex: 1;
-  }
-
+  .addTaskBtn,
   .editModeBtn,
   .editModeActiveBtn {
-    flex: 1;
+    padding: 11px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
   }
-
 
   .exportBtn {
-    width: 100%;
-    padding: 12px;
+    grid-column: 1 / -1;
+    padding: 11px 12px;
     font-size: 13px;
+    border-radius: 10px;
+    text-align: center;
     justify-content: center;
-    order: 99;
+    display: flex;
+    align-items: center;
   }
+
   .showAllBtn {
+    grid-column: 1 / -1;
+    padding: 11px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  /* Filter row - horizontal scroll on mobile */
+  /* Filter row - wrapping on mobile */
+  .filterRow {
+    padding: 12px 0;
+    gap: 6px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    margin-bottom: 4px;
+  }
+
+  .filterBtn {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    font-size: 12px;
+  }
+
+  .filterSep {
     width: 100%;
-    order:100;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.04);
+    flex-shrink: 0;
+  }
+
+  .toggleBtn {
+    flex: 1;
+    text-align: center;
+  }
+
+  /* Mobile deadline card */
+  .mobileDeadlineCard {
+    display: block;
+    background: rgba(139, 92, 246, 0.06);
+    border: 1px solid rgba(139, 92, 246, 0.12);
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .mobileDeadlineLabel {
+    color: #6b7194;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+
+  .mobileDeadlineDate {
+    color: #8b5cf6;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+
+  .mobileDeadlineTask {
+    color: #9ca3bf;
+    font-size: 13px;
+    margin: 0;
   }
 }

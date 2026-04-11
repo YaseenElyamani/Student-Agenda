@@ -125,6 +125,22 @@ export default function Dashboard({
   const [showModal, setShowModal] = useState(false);
   const [showAddTask, setShowAddTask] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [hideCompleted, setHideCompleted] = useState(() => localStorage.getItem("studhub_hideCompleted") === "true");
+  const [hideOverdue, setHideOverdue] = useState(() => localStorage.getItem("studhub_hideOverdue") === "true");
+
+  const toggleHideCompleted = () => {
+    setHideCompleted(prev => {
+      localStorage.setItem("studhub_hideCompleted", String(!prev));
+      return !prev;
+    });
+  };
+
+  const toggleHideOverdue = () => {
+    setHideOverdue(prev => {
+      localStorage.setItem("studhub_hideOverdue", String(!prev));
+      return !prev;
+    });
+  };
 
   const allTasks = courses.flatMap(c =>
     c.tasks.map(t => ({ ...t, courseCode: c.code, courseColor: c.color }))
@@ -133,7 +149,16 @@ export default function Dashboard({
   const filteredTasks = (activeCourseId === "all"
     ? allTasks
     : allTasks.filter(t => t.course_id === activeCourseId)
-  ).map(t => ({ ...t, completed: completedIds.has(t.id) }));
+  ).map(t => ({ ...t, completed: completedIds.has(t.id) }))
+  .filter(t => {
+    if (hideCompleted && t.completed) return false;
+    if (hideOverdue && !t.completed && t.due_date && t.due_date !== "TBD") {
+      const [y, m, d] = t.due_date.split("-").map(Number);
+      const due = new Date(y, m - 1, d, 23, 59, 59, 999);
+      if (due < new Date()) return false;
+    }
+    return true;
+  });
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -253,7 +278,7 @@ export default function Dashboard({
                   </p>
                 </div>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+              <div className={styles.actionRow}>
                 <button
                   className={styles.exportBtn}
                   onClick={() => exportToICS(courses)}
@@ -299,6 +324,19 @@ export default function Dashboard({
                   {c.code}
                 </button>
               ))}
+              <span className={styles.filterSep} />
+              <button
+                className={`${styles.toggleBtn} ${hideCompleted ? styles.toggleActive : ""}`}
+                onClick={toggleHideCompleted}
+              >
+                {hideCompleted ? "✓ " : ""}Hide Completed
+              </button>
+              <button
+                className={`${styles.toggleBtn} ${hideOverdue ? styles.toggleActive : ""}`}
+                onClick={toggleHideOverdue}
+              >
+                {hideOverdue ? "✓ " : ""}Hide Overdue
+              </button>
             </div>
 
             {filteredTasks.length > 0

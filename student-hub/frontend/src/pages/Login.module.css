@@ -1,101 +1,139 @@
 .layout {
   min-height: 100vh;
-  background: #0d0f14;
+  background: #060812;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Inter', -apple-system, sans-serif;
+  font-family: 'DM Sans', 'Inter', -apple-system, sans-serif;
   padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient gradient orbs */
+.layout::before {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+  top: -200px;
+  right: -100px;
+  pointer-events: none;
+}
+
+.layout::after {
+  content: '';
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+  bottom: -150px;
+  left: -100px;
+  pointer-events: none;
 }
 
 .card {
-  background: #15171f;
-  border: 1px solid #1e2028;
-  border-radius: 20px;
+  background: rgba(17, 19, 28, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 24px;
   padding: 48px 44px;
   width: 100%;
-  max-width: 420px;
+  max-width: 430px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
+  position: relative;
+  z-index: 1;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 8px 40px rgba(0, 0, 0, 0.4),
+    0 0 80px rgba(139, 92, 246, 0.04);
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 4px;
 }
 
 .logoIcon {
-  color: #7c6fcd;
-  font-size: 20px;
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 22px;
 }
 
 .logoText {
   color: #ffffff;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
+  letter-spacing: -0.3px;
 }
 
 .hero {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .heading {
   color: #ffffff;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   margin: 0;
+  letter-spacing: -0.5px;
 }
 
 .tagline {
-  color: #4a4f62;
-  font-size: 13px;
+  color: #6b7194;
+  font-size: 14px;
   line-height: 1.6;
   margin: 0;
 }
 
 .googleBtn {
   width: 100%;
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  color: #3c3c3c;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: #e2e4ed;
   font-size: 14px;
   font-weight: 500;
-  padding: 13px 20px;
+  padding: 14px 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  transition: all 0.15s;
-  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
 }
 
 .googleBtn:hover {
-  background: #15171f;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .fields {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
 .label {
-  color: #4a4f62;
+  color: #6b7194;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.8px;
@@ -103,25 +141,27 @@
 }
 
 .input {
-  background: #1a1d27;
-  border: 1px solid #2a2d3a;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
   color: #ffffff;
   font-size: 14px;
-  padding: 12px 14px;
+  padding: 13px 16px;
   outline: none;
-  transition: border-color 0.15s;
-  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
   width: 100%;
   box-sizing: border-box;
 }
 
 .input:focus {
-  border-color: #7c6fcd;
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .input::placeholder {
-  color: #4a4f62;
+  color: #3d4260;
 }
 
 .forgotLink {
@@ -130,65 +170,87 @@
 }
 
 .error {
-  color: #ef4444;
+  color: #f87171;
   font-size: 13px;
-  margin: -6px 0 0;
-  background: #2a1a1a;
-  border: 1px solid #ef444433;
-  border-radius: 8px;
-  padding: 10px 12px;
+  margin: -4px 0 0;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  border-radius: 10px;
+  padding: 11px 14px;
 }
 
 .submitBtn {
-  background: #7c6fcd;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
   border: none;
   color: #ffffff;
   padding: 14px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s;
-  font-family: 'Inter', sans-serif;
+  transition: all 0.25s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
   width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.submitBtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
 }
 
 .submitBtn:hover {
-  background: #6d63cc;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+}
+
+.submitBtn:hover::before {
+  opacity: 1;
+}
+
+.submitBtn:active {
+  transform: translateY(0);
 }
 
 .submitBtn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .divider {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .dividerLine {
   flex: 1;
   height: 1px;
-  background: #1e2028;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .dividerText {
-  color: #4a4f62;
+  color: #4a4f6a;
   font-size: 12px;
 }
 
 .guestBtn {
   background: transparent;
-  border: 1px solid #2a2d3a;
-  color: #9ca3af;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: #9ca3bf;
   padding: 14px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.15s;
-  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -197,49 +259,53 @@
 }
 
 .guestBtn:hover {
-  border-color: #4a4f62;
+  border-color: rgba(139, 92, 246, 0.25);
+  background: rgba(139, 92, 246, 0.04);
   color: #ffffff;
 }
 
 .guestNote {
   font-size: 11px;
-  color: #4a4f62;
+  color: #4a4f6a;
 }
 
 .switchText {
-  color: #4a4f62;
+  color: #6b7194;
   font-size: 13px;
   text-align: center;
-  margin: -6px 0 0;
+  margin: -4px 0 0;
 }
 
 .switchBtn {
   background: transparent;
   border: none;
-  color: #7c6fcd;
+  color: #8b5cf6;
   font-size: 13px;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans', 'Inter', sans-serif;
   padding: 0;
+  font-weight: 500;
+  transition: color 0.15s ease;
 }
 
 .switchBtn:hover {
+  color: #a78bfa;
   text-decoration: underline;
 }
 
 .loadingScreen {
   min-height: 100vh;
-  background: #0d0f14;
+  background: #060812;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 16px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans', 'Inter', sans-serif;
 }
 
 .loadingIcon {
-  color: #7c6fcd;
+  color: #8b5cf6;
   font-size: 32px;
   animation: spin 2s linear infinite;
   display: inline-block;
@@ -251,17 +317,17 @@
 }
 
 .loadingText {
-  color: #4a4f62;
+  color: #6b7194;
   font-size: 14px;
   margin: 0;
 }
 
 .expiredBanner {
-  background: #2a1a00;
-  border: 1px solid #f59e0b44;
-  border-radius: 8px;
-  padding: 10px 14px;
-  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 10px;
+  padding: 11px 14px;
+  color: #fbbf24;
   font-size: 13px;
   display: flex;
   align-items: center;
@@ -272,9 +338,25 @@
 .expiredClose {
   background: transparent;
   border: none;
-  color: #f59e0b;
+  color: #fbbf24;
   cursor: pointer;
   font-size: 14px;
   padding: 0;
   flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+
+.expiredClose:hover {
+  opacity: 0.7;
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 36px 28px;
+    border-radius: 20px;
+  }
+
+  .heading {
+    font-size: 22px;
+  }
 }
