@@ -317,27 +317,33 @@ def parse_syllabus():
     term = request.form.get("term", "").strip().lower()  # "fall", "winter", "spring-summer"
 
     # Map term to valid month ranges
+    from datetime import date as date_cls
+    current_year = date_cls.today().year
+
     term_info = ""
     if term == "fall":
-        term_info = """
-TERM CONSTRAINT: This is a FALL term course (September – December).
-- ALL due dates MUST fall between September 1 and December 31.
-- If the syllabus shows a date outside this range (e.g. January, May, October of a different year context), it is likely an error in the syllabus or refers to a different term — adjust the date to fit within September–December of the current academic year, or set it to TBD if it clearly doesn't belong.
-- If year is missing, use the current year for September–December dates.
+        term_info = f"""
+TERM CONSTRAINT: This is a FALL {current_year} course (September – December {current_year}).
+- ALL due dates MUST use year {current_year} regardless of what year the syllabus says. Syllabi are often reused from previous years — ignore the printed year entirely and use {current_year}.
+- ALL due dates MUST have a month between September and December (months 09–12).
+- If a date's month falls OUTSIDE September–December, set that task's due_date to "TBD". Do NOT guess or adjust the month.
+- If the syllabus says "June 15" or "January 20", that is outside the fall term — set due_date to "TBD".
 """
     elif term == "winter":
-        term_info = """
-TERM CONSTRAINT: This is a WINTER term course (January – April).
-- ALL due dates MUST fall between January 1 and April 30.
-- If the syllabus shows a date outside this range (e.g. September, June, October), it is likely an error in the syllabus or refers to a different term — adjust the date to fit within January–April, or set it to TBD if it clearly doesn't belong.
-- If year is missing, use the current year for January–April dates.
+        term_info = f"""
+TERM CONSTRAINT: This is a WINTER {current_year} course (January – April {current_year}).
+- ALL due dates MUST use year {current_year} regardless of what year the syllabus says. Syllabi are often reused from previous years — ignore the printed year entirely and use {current_year}.
+- ALL due dates MUST have a month between January and April (months 01–04).
+- If a date's month falls OUTSIDE January–April, set that task's due_date to "TBD". Do NOT guess or adjust the month.
+- If the syllabus says "September 10" or "June 5", that is outside the winter term — set due_date to "TBD".
 """
     elif term in ("spring-summer", "spring", "summer"):
-        term_info = """
-TERM CONSTRAINT: This is a SPRING/SUMMER term course (May – August).
-- ALL due dates MUST fall between May 1 and August 31.
-- If the syllabus shows a date outside this range (e.g. September, October, January, December), it is likely an error in the syllabus or refers to a different term — adjust the date to fit within May–August, or set it to TBD if it clearly doesn't belong.
-- If year is missing, use the current year for May–August dates.
+        term_info = f"""
+TERM CONSTRAINT: This is a SPRING/SUMMER {current_year} course (May – August {current_year}).
+- ALL due dates MUST use year {current_year} regardless of what year the syllabus says. Syllabi are often reused from previous years — ignore the printed year entirely and use {current_year}.
+- ALL due dates MUST have a month between May and August (months 05–08).
+- If a date's month falls OUTSIDE May–August, set that task's due_date to "TBD". Do NOT guess or adjust the month.
+- If the syllabus says "October 15" or "January 20", that is outside the spring/summer term — set due_date to "TBD".
 """
 
     try:
@@ -389,7 +395,7 @@ TASK RULES:
 - If no specific due date exists or the task is ongoing/participation-based with no clear deadline, use TBD
 - Do NOT assign a due date to participation grades, attendance, or engagement metrics
 - Only extract tasks that have clear individual submission deadlines
-- If year is missing, assume current year, but if month has already passed assume next year
+- ALWAYS use the current year for dates, regardless of what year the syllabus prints. Syllabi are frequently reused across years — the printed year is unreliable. The term constraint above specifies the exact year to use.
 - Final exam dates set by the university should use TBD for due_date
 
 LECTURE RULES:
