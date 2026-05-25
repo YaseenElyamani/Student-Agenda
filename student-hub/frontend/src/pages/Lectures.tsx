@@ -255,7 +255,7 @@ export default function Lectures({
                 </div>
               </div>
               <div className={styles.formActions}>
-                <button className={styles.cancelBtn} onClick={resetForm}>Cancel</button>
+                <button className={styles.cancelBtn} onClick={() => resetForm()}>Cancel</button>
                 <button
                   className={styles.saveBtn}
                   disabled={!formCourseId}

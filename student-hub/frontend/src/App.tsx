@@ -124,12 +124,13 @@ function App() {
     setSessionExpired(false);
   };
 
-  const handleGuest = () => {
+  const _handleGuest = () => {
     setIsGuest(true);
     setToken(null);
     setCourses([]);
     setCompletedIds(new Set());
   };
+  void _handleGuest; // reserved for future use
 
   const handleLogout = () => {
     localStorage.removeItem("studhub_token");

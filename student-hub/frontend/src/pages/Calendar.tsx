@@ -5,7 +5,7 @@ import UploadModal from "../components/UploadModal";
 import type { CourseInfo } from "../App";
 import type { Task } from "../types/Task";
 import type { Lecture, RawLecture } from "../types/Lecture";
-import { DAYS_OF_WEEK } from "../types/Lecture";
+// DAYS_OF_WEEK available from "../types/Lecture" if needed
 import styles from "./Calendar.module.css";
 
 interface CalendarProps {
