@@ -5,6 +5,7 @@ import TaskTable from "../components/TaskTable";
 import UploadModal from "../components/UploadModal";
 import AddTaskModal from "../components/AddTaskModal";
 import type { Task } from "../types/Task";
+import type { RawLecture } from "../types/Lecture";
 import type { CourseInfo } from "../App";
 import styles from "./Dashboard.module.css";
 
@@ -13,7 +14,7 @@ interface DashboardProps {
   activeCourse: CourseInfo | null;
   activeCourseId: number | "all";
   onSelectCourse: (id: number | "all") => void;
-  onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
+  onCourseLoaded: (code: string, name: string, tasks: Task[], rawLectures?: RawLecture[]) => void;
   onRemoveCourse: (id: number) => void;
   completedIds: Set<number>;
   onToggleTask: (id: number) => void;
@@ -23,6 +24,7 @@ interface DashboardProps {
   onLogout: () => void;
   isGuest?: boolean;
   token: string | null;
+  onOpenLogin?: () => void;
 }
 
 function parseLocalDate(dateStr: string): Date {
@@ -121,6 +123,7 @@ export default function Dashboard({
   onTaskAdded,
   onLogout,
   isGuest,
+  onOpenLogin,
 }: DashboardProps) {
   const [showModal, setShowModal] = useState(false);
   const [showAddTask, setShowAddTask] = useState(false);
@@ -175,8 +178,8 @@ export default function Dashboard({
     })
     .sort((a, b) => parseLocalDate(a.due_date).getTime() - parseLocalDate(b.due_date).getTime());
 
-  const handleCourseLoaded = (code: string, name: string, tasks: Task[]) => {
-    onCourseLoaded(code, name, tasks);
+  const handleCourseLoaded = (code: string, name: string, tasks: Task[], rawLectures?: RawLecture[]) => {
+    onCourseLoaded(code, name, tasks, rawLectures);
     setShowModal(false);
   };
 
@@ -194,6 +197,7 @@ export default function Dashboard({
         completedIds={completedIds}
         onLogout={onLogout}
         isGuest={isGuest}
+        onOpenLogin={onOpenLogin}
       />
 
       {showModal && (

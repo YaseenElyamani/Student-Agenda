@@ -1,0 +1,507 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  height: 100dvh;
+  background: #060812;
+  font-family: 'DM Sans', 'Inter', -apple-system, sans-serif;
+  overflow: hidden;
+}
+
+.main {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.content {
+  padding: 40px 44px;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.heading {
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  letter-spacing: -0.5px;
+}
+
+.subheading {
+  color: #6b7194;
+  font-size: 14px;
+  margin: 0;
+}
+
+.addBtn {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.addBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+}
+
+/* Filter */
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: transparent;
+  color: #8a8faa;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
+}
+
+.filterBtn:hover {
+  border-color: rgba(139, 92, 246, 0.4);
+  color: #e2e4ed;
+}
+
+.filterActive {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  border-color: transparent;
+  color: #fff;
+}
+
+.filterDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+/* Form card */
+.formCard {
+  background: rgba(17, 19, 28, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(139, 92, 246, 0.12);
+  border-radius: 16px;
+  padding: 26px;
+  margin-bottom: 24px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.formTitle {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 20px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formLabel {
+  color: #6b7194;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.formInput,
+.formSelect {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 14px;
+  padding: 10px 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.formInput:focus,
+.formSelect:focus {
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.formSelect option {
+  background: #11131c;
+  color: #ffffff;
+}
+
+.formActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.cancelBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: #6b7194;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
+}
+
+.cancelBtn:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #e2e4ed;
+}
+
+.saveBtn {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  border: none;
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
+}
+
+.saveBtn:hover:not(:disabled) {
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.25);
+}
+
+.saveBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Schedule grid */
+.scheduleCard {
+  background: rgba(17, 19, 28, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 26px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.sectionTitle {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 18px;
+}
+
+.scheduleGrid {
+  display: grid;
+  grid-template-columns: 80px repeat(5, 1fr);
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  overflow: hidden;
+  min-width: 600px;
+}
+
+.timeHeader,
+.dayHeader {
+  background: rgba(10, 12, 20, 0.8);
+  padding: 10px;
+  text-align: center;
+}
+
+.dayHeader {
+  color: #8a8faa;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.timeLabel {
+  background: rgba(10, 12, 20, 0.6);
+  color: #4a4f6a;
+  font-size: 11px;
+  padding: 12px 8px;
+  text-align: right;
+  min-height: 48px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.scheduleCell {
+  background: rgba(10, 12, 20, 0.4);
+  min-height: 48px;
+  padding: 2px;
+  position: relative;
+}
+
+.scheduleBlock {
+  border-radius: 6px;
+  border-left: 3px solid;
+  padding: 4px 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  transition: opacity 0.15s ease;
+  overflow: hidden;
+}
+
+.scheduleBlock:hover {
+  opacity: 0.85;
+}
+
+.blockCode {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.blockType {
+  font-size: 9px;
+  color: #6b7194;
+}
+
+.blockLoc {
+  font-size: 9px;
+  color: #4a4f6a;
+}
+
+/* Lecture list */
+.listCard {
+  background: rgba(17, 19, 28, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 26px;
+}
+
+.lectureList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lectureItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.15s ease;
+}
+
+.lectureItem:last-child {
+  border-bottom: none;
+}
+
+.lectureBar {
+  width: 3px;
+  height: 36px;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+
+.lectureInfo {
+  flex: 1;
+}
+
+.lectureName {
+  color: #e2e4ed;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 3px;
+}
+
+.lectureMeta {
+  color: #6b7194;
+  font-size: 12px;
+  margin: 0;
+}
+
+.lectureType {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+
+.lectureActions {
+  display: flex;
+  gap: 4px;
+}
+
+.editBtn,
+.deleteBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #6b7194;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.editBtn:hover {
+  border-color: rgba(139, 92, 246, 0.3);
+  color: #a78bfa;
+  background: rgba(139, 92, 246, 0.06);
+}
+
+.deleteBtn:hover {
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.06);
+}
+
+/* Empty state */
+.emptyState {
+  background: rgba(17, 19, 28, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 60px 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.emptyIcon {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.emptyTitle {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.emptySub {
+  color: #6b7194;
+  font-size: 14px;
+  margin: 0;
+  max-width: 360px;
+  line-height: 1.5;
+}
+
+.emptyBtn {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  border: none;
+  color: #fff;
+  padding: 11px 24px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
+  margin-top: 8px;
+}
+
+.emptyBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+}
+
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .content {
+    padding: 56px 14px 24px;
+  }
+
+  .heading {
+    font-size: 22px;
+  }
+
+  .headerRow {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .addBtn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .formActions {
+    flex-direction: column;
+  }
+
+  .scheduleCard {
+    padding: 16px;
+  }
+
+  .listCard {
+    padding: 16px;
+  }
+
+  .lectureItem {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .emptyState {
+    padding: 40px 20px;
+  }
+}

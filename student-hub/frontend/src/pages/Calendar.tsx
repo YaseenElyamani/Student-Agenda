@@ -4,6 +4,8 @@ import Sidebar from "../components/Sidebar";
 import UploadModal from "../components/UploadModal";
 import type { CourseInfo } from "../App";
 import type { Task } from "../types/Task";
+import type { Lecture, RawLecture } from "../types/Lecture";
+import { DAYS_OF_WEEK } from "../types/Lecture";
 import styles from "./Calendar.module.css";
 
 interface CalendarProps {
@@ -11,11 +13,13 @@ interface CalendarProps {
   activeCourseId: number | null;
   onSelectCourse: (id: number | "all") => void;
   onAddCourse: () => void;
-  onCourseLoaded: (code: string, name: string, tasks: Task[]) => void;
+  onCourseLoaded: (code: string, name: string, tasks: Task[], rawLectures?: RawLecture[]) => void;
   onRemoveCourse: (id: number) => void;
   onLogout: () => void;
   isGuest?: boolean;
   completedIds?: Set<number>;
+  onOpenLogin?: () => void;
+  lectures?: Lecture[];
 }
 
 function parseLocalDate(dateStr: string): Date {
@@ -37,11 +41,18 @@ const MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
 const SHORT_MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-export default function Calendar({ courses, activeCourseId, onSelectCourse, onCourseLoaded, onRemoveCourse, onLogout, isGuest, completedIds = new Set() }: CalendarProps) {
+const LECTURE_COLOR = "#14b8a6"; // teal — distinct from course colors
+const DAY_TO_WEEKDAY: Record<string, number> = {
+  Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3,
+  Thursday: 4, Friday: 5, Saturday: 6,
+};
+
+export default function Calendar({ courses, activeCourseId, onSelectCourse, onCourseLoaded, onRemoveCourse, onLogout, isGuest, completedIds = new Set(), onOpenLogin, lectures = [] }: CalendarProps) {
   const today = new Date();
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [filterCourseId, setFilterCourseId] = useState<number | "all">("all");
+  const [showLectures, setShowLectures] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
@@ -52,6 +63,16 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
   const allTasks = filteredCourses.flatMap(c =>
     c.tasks.map(t => ({ ...t, courseCode: c.code, courseColor: c.color }))
   );
+
+  // Build lecture chips for a given weekday number (0=Sun..6=Sat)
+  const filteredLectures = showLectures
+    ? (filterCourseId === "all"
+        ? lectures
+        : lectures.filter(l => l.courseId === filterCourseId))
+    : [];
+
+  const getLecturesForWeekday = (weekday: number) =>
+    filteredLectures.filter(l => DAY_TO_WEEKDAY[l.day] === weekday);
 
   const getTasksForDay = (day: number) =>
     allTasks.filter(t => {
@@ -85,8 +106,8 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
     .sort((a, b) => parseLocalDate(a.due_date).getTime() - parseLocalDate(b.due_date).getTime())
     .slice(0, 8);
 
-  const handleCourseLoaded = (code: string, name: string, tasks: Task[]) => {
-    onCourseLoaded(code, name, tasks);
+  const handleCourseLoaded = (code: string, name: string, tasks: Task[], rawLectures?: RawLecture[]) => {
+    onCourseLoaded(code, name, tasks, rawLectures);
     setShowModal(false);
   };
 
@@ -101,6 +122,7 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
         onLogout={onLogout}
         isGuest={isGuest}
         completedIds={completedIds}
+        onOpenLogin={onOpenLogin}
       />
 
       {showModal && (
@@ -113,7 +135,7 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
           <p className={styles.subheading}>View all your assignments and deadlines</p>
 
           <div className={styles.filterRow}>
-            <span className={styles.filterLabel}>⚙ Filter by course:</span>
+            <span className={styles.filterLabel}>⚙ Filter:</span>
             <button
               className={`${styles.filterBtn} ${filterCourseId === "all" ? styles.filterActive : ""}`}
               onClick={() => setFilterCourseId("all")}
@@ -131,6 +153,23 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
                 {c.code}
               </button>
             ))}
+
+            {lectures.length > 0 && (
+              <>
+                <span className={styles.filterSep} />
+                <button
+                  className={`${styles.filterBtn} ${showLectures ? styles.lectureFilterActive : ""}`}
+                  style={showLectures
+                    ? { background: LECTURE_COLOR + "22", borderColor: LECTURE_COLOR, color: LECTURE_COLOR }
+                    : { borderColor: LECTURE_COLOR + "66", color: LECTURE_COLOR + "99" }
+                  }
+                  onClick={() => setShowLectures(v => !v)}
+                >
+                  <span className={styles.filterDot} style={{ background: LECTURE_COLOR }} />
+                  Lectures
+                </button>
+              </>
+            )}
           </div>
 
           <div className={styles.calendarCard}>
@@ -150,9 +189,27 @@ export default function Calendar({ courses, activeCourseId, onSelectCourse, onCo
                 if (!day) return <div key={`empty-${i}`} className={styles.emptyCell} />;
                 const dayTasks = getTasksForDay(day);
                 const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
+                const cellDate = new Date(currentYear, currentMonth, day);
+                const weekday = cellDate.getDay();
+                const dayLectures = getLecturesForWeekday(weekday);
                 return (
                   <div key={day} className={`${styles.dayCell} ${isToday ? styles.todayCell : ""}`}>
                     <span className={`${styles.dayNum} ${isToday ? styles.todayNum : ""}`}>{day}</span>
+                    {dayLectures.map((l, idx) => {
+                      const course = courses.find(c => c.id === l.courseId);
+                      return (
+                        <div
+                          key={`lec-${idx}`}
+                          className={styles.lectureChip}
+                          style={{ background: LECTURE_COLOR + "22", borderLeft: `3px solid ${LECTURE_COLOR}`, color: LECTURE_COLOR }}
+                          title={`${course?.code || ""} ${l.type} ${l.startTime}–${l.endTime}${l.location ? " • " + l.location : ""}`}
+                        >
+                          <span className={styles.chipTitle}>
+                            {course?.code} {l.type.slice(0, 3)}
+                          </span>
+                        </div>
+                      );
+                    })}
                     {dayTasks.map((t, idx) => (
                       <div
                         key={idx}

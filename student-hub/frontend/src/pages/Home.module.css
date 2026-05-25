@@ -214,6 +214,115 @@
   padding: 11px 16px;
 }
 
+/* Term selection card */
+.termCard {
+  background: rgba(17, 19, 28, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(139, 92, 246, 0.12);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 640px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.termHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+}
+
+.termHeaderIcon {
+  font-size: 28px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(99, 102, 241, 0.08));
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+.termTitle {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: -0.3px;
+}
+
+.termSub {
+  color: #6b7194;
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.termFileName {
+  color: #a78bfa;
+  font-weight: 500;
+}
+
+.termActions {
+  display: flex;
+  gap: 10px;
+}
+
+.termBackBtn {
+  flex: 0 0 auto;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: #6b7194;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
+}
+
+.termBackBtn:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #e2e4ed;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.termUploadBtn {
+  flex: 1;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+  border: none;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
+}
+
+.termUploadBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+}
+
+.termUploadBtnDisabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
   .content {
     padding: 60px 20px 24px;
@@ -225,5 +334,21 @@
 
   .heading {
     font-size: 24px;
+  }
+
+  .termCard {
+    padding: 24px 18px;
+  }
+
+  .termActions {
+    flex-direction: column;
+  }
+
+  .termBackBtn {
+    order: 2;
+  }
+
+  .termUploadBtn {
+    order: 1;
   }
 }

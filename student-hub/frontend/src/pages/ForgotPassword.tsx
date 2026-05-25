@@ -18,7 +18,7 @@ export default function ForgotPassword() {
     setError(null);
 
     try {
-      const res = await fetch("https://student-agenda-production.up.railway.app/auth/forgot-password", {
+      const res = await fetch("https://student-agenda.onrender.com/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase() }),

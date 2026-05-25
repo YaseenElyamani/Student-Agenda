@@ -79,6 +79,17 @@
   border-radius: 50%;
 }
 
+.filterSep {
+  width: 1px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.lectureFilterActive {
+  font-weight: 600;
+}
+
 /* Calendar Card */
 .calendarCard {
   background: rgba(17, 19, 28, 0.6);
@@ -211,6 +222,31 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
+}
+
+.lectureChip {
+  padding: 3px 6px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  overflow: hidden;
+  cursor: default;
+  transition: transform 0.1s ease;
+}
+
+.lectureChip:hover {
+  transform: scale(1.02);
+}
+
+.filterSep {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.lectureFilterActive {
+  font-weight: 600;
 }
 
 /* Upcoming */

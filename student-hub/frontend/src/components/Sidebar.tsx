@@ -12,9 +12,10 @@ interface SidebarProps {
   completedIds?: Set<number>;
   onLogout: () => void;
   isGuest?: boolean;
+  onOpenLogin?: () => void;
 }
 
-export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAddCourse, onRemoveCourse, completedIds, onLogout, isGuest }: SidebarProps) {
+export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAddCourse, onRemoveCourse, completedIds, onLogout, isGuest, onOpenLogin }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [hoveredCourseId, setHoveredCourseId] = useState<number | null>(null);
@@ -108,6 +109,12 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
             >
               <span>📅</span> Unified Calendar
             </div>
+            <div
+              className={`${styles.quickItem} ${location.pathname === "/lectures" ? styles.active : ""}`}
+              onClick={() => handleNavClick("/lectures")}
+            >
+              <span>📚</span> Lectures
+            </div>
           </div>
         )}
 
@@ -175,10 +182,10 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
             {!collapsed ? (
               <>
                 {isGuest && (
-                  <div className={styles.guestBanner}>
-                    👤 Guest Mode
-                    <span className={styles.guestSub}>Data won't be saved</span>
-                  </div>
+                  <button className={styles.signInBtn} onClick={onOpenLogin}>
+                    ✦ Sign in to save your courses
+                    <span className={styles.signInSub}>Sync across devices</span>
+                  </button>
                 )}
                 <p className={styles.footerLabel}>Tasks Due</p>
                 <div className={styles.footerCount}>{totalTasks - completedCount}</div>
@@ -186,9 +193,11 @@ export default function Sidebar({ courses, activeCourseId, onSelectCourse, onAdd
                   <div className={styles.progressFill} style={{ width: `${progressPct}%` }} />
                 </div>
                 <p className={styles.footerSub}>{completedCount} of {totalTasks} completed</p>
-                <button className={styles.logoutBtn} onClick={onLogout}>
-                  {isGuest ? "Exit Guest Mode" : "Sign Out"}
-                </button>
+                {!isGuest && (
+                  <button className={styles.logoutBtn} onClick={onLogout}>
+                    Sign Out
+                  </button>
+                )}
               </>
             ) : (
               <div className={styles.progressBar}>

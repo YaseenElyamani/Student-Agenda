@@ -303,6 +303,38 @@
   font-size: 11px;
 }
 
+.signInBtn {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(99, 102, 241, 0.08));
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: #a78bfa;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  text-align: left;
+  transition: all 0.2s ease;
+  font-family: 'DM Sans', 'Inter', sans-serif;
+  margin-bottom: 8px;
+}
+
+.signInBtn:hover {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(99, 102, 241, 0.14));
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+.signInSub {
+  color: #6b7194;
+  font-size: 11px;
+  font-weight: 400;
+}
+
 .logoutBtn {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.06);

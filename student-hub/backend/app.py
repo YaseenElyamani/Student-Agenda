@@ -318,7 +318,7 @@ def parse_syllabus():
         pdf_bytes = file.read()
 
         prompt = """
-Extract all graded items from this syllabus PDF.
+Extract all graded items AND lecture/class schedule from this syllabus PDF.
 Return JSON ONLY with this exact structure, no explanation, no markdown:
 {
     "course_code": "e.g. CP363",
@@ -331,10 +331,20 @@ Return JSON ONLY with this exact structure, no explanation, no markdown:
             "due_time": "10:30",
             "weight": "10%"
         }
+    ],
+    "lectures": [
+        {
+            "type": "Lecture",
+            "day": "Monday",
+            "startTime": "10:00",
+            "endTime": "11:30",
+            "location": "H-110",
+            "sections": null
+        }
     ]
 }
 
-IMPORTANT RULES:
+TASK RULES:
 - Valid types are: Assignment, Quiz, Exam, Lab, Midterm, Final Exam, Discussion
 - due_time MUST always be in 24-hour "HH:MM" format (e.g. "23:59", "10:30") or null
 - NEVER store text like "in-class time", "TBD", or any other text in due_time — use null instead
@@ -354,6 +364,22 @@ IMPORTANT RULES:
 - Only extract tasks that have clear individual submission deadlines
 - If year is missing, assume current year, but if month has already passed assume next year
 - Final exam dates set by the university should use TBD for due_date
+
+LECTURE RULES:
+- Extract ALL class meetings: lectures, tutorials, labs, seminars
+- Valid types: "Lecture", "Tutorial", "Lab", "Seminar"
+- day MUST be a full day name: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+- startTime and endTime MUST be 24-hour "HH:MM" format
+- If the syllabus lists MULTIPLE SECTIONS (e.g. Section A, Section B, Section 001, Section 002), set "sections" to an array:
+  "sections": [
+    {"name": "A", "day": "Monday", "startTime": "10:00", "endTime": "11:30", "location": "H-110"},
+    {"name": "B", "day": "Wednesday", "startTime": "14:00", "endTime": "15:30", "location": "H-820"}
+  ]
+  In this case, day/startTime/endTime/location at the top level should be null (the section data replaces them).
+- If there is only ONE section or no section info, set "sections" to null and fill day/startTime/endTime/location directly
+- If day or time is not found, set them to null — the frontend will ask the user
+- Create separate entries for each type (one for Lecture, one for Tutorial, etc.)
+- If the same type meets on multiple days (e.g. Lecture on Mon and Wed), create a SEPARATE entry for each day
 """
 
         response = client.models.generate_content(
@@ -384,6 +410,9 @@ IMPORTANT RULES:
                 "duplicate": True
             }), 409
 
+        # Extract lectures from AI response
+        raw_lectures = extracted_data.get("lectures", [])
+
         if user_id:
             course = Course(user_id=user_id, code=course_code, name=course_name)
             db.session.add(course)
@@ -403,7 +432,8 @@ IMPORTANT RULES:
 
             return jsonify({
                 "course": course.to_dict(),
-                "tasks": [t.to_dict() for t in course.tasks]
+                "tasks": [t.to_dict() for t in course.tasks],
+                "lectures": raw_lectures
             })
         else:
             # Guest mode — return parsed data without saving to DB
@@ -422,7 +452,8 @@ IMPORTANT RULES:
                 })
             return jsonify({
                 "course": {"id": 1, "code": course_code, "name": course_name},
-                "tasks": tasks
+                "tasks": tasks,
+                "lectures": raw_lectures
             })
 
     except Exception as e:

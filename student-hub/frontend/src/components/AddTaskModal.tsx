@@ -32,7 +32,7 @@ export default function AddTaskModal({ courses, defaultCourseId, onClose, onTask
     setError(null);
 
     try {
-      const res = await authFetch("https://student-agenda-production.up.railway.app/add-task", {
+      const res = await authFetch("https://student-agenda.onrender.com/add-task", {
         method: "POST",
         body: JSON.stringify({
           course_id: courseId,

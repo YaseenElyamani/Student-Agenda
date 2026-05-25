@@ -34,7 +34,7 @@ export default function ResetPassword() {
     setError(null);
 
     try {
-      const res = await fetch("https://student-agenda-production.up.railway.app/auth/reset-password", {
+      const res = await fetch("https://student-agenda.onrender.com/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, password }),
