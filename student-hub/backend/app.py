@@ -314,11 +314,38 @@ def parse_syllabus():
     if file.filename == "":
         return jsonify({"error": "No file selected"}), 400
 
+    term = request.form.get("term", "").strip().lower()  # "fall", "winter", "spring-summer"
+
+    # Map term to valid month ranges
+    term_info = ""
+    if term == "fall":
+        term_info = """
+TERM CONSTRAINT: This is a FALL term course (September – December).
+- ALL due dates MUST fall between September 1 and December 31.
+- If the syllabus shows a date outside this range (e.g. January, May, October of a different year context), it is likely an error in the syllabus or refers to a different term — adjust the date to fit within September–December of the current academic year, or set it to TBD if it clearly doesn't belong.
+- If year is missing, use the current year for September–December dates.
+"""
+    elif term == "winter":
+        term_info = """
+TERM CONSTRAINT: This is a WINTER term course (January – April).
+- ALL due dates MUST fall between January 1 and April 30.
+- If the syllabus shows a date outside this range (e.g. September, June, October), it is likely an error in the syllabus or refers to a different term — adjust the date to fit within January–April, or set it to TBD if it clearly doesn't belong.
+- If year is missing, use the current year for January–April dates.
+"""
+    elif term in ("spring-summer", "spring", "summer"):
+        term_info = """
+TERM CONSTRAINT: This is a SPRING/SUMMER term course (May – August).
+- ALL due dates MUST fall between May 1 and August 31.
+- If the syllabus shows a date outside this range (e.g. September, October, January, December), it is likely an error in the syllabus or refers to a different term — adjust the date to fit within May–August, or set it to TBD if it clearly doesn't belong.
+- If year is missing, use the current year for May–August dates.
+"""
+
     try:
         pdf_bytes = file.read()
 
         prompt = """
 Extract all graded items AND lecture/class schedule from this syllabus PDF.
+""" + term_info + """
 Return JSON ONLY with this exact structure, no explanation, no markdown:
 {
     "course_code": "e.g. CP363",
